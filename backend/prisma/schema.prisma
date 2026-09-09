@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Jobs ─────────────────────────────────────────────────────────────────────
+
+model Job {
+  id           String   @id @default(cuid())
+  title        String   @db.VarChar(255)
+  company      String   @db.VarChar(255)
+  location     String   @db.VarChar(255)
+  type         JobType
+  salary       String?  @db.VarChar(100)
+  description  String   @db.Text
+  requirements String   @db.Text
+  benefits     String?  @db.Text
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  applications Application[]
+
+  @@index([isActive])
+  @@index([type])
+  @@map("jobs")
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  REMOTE
+  CONTRACT
+  INTERNSHIP
+}
+
+// ── Applications ─────────────────────────────────────────────────────────────
+
+model Application {
+  id          String            @id @default(cuid())
+  jobId       String
+  job         Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  firstName   String            @db.VarChar(100)
+  lastName    String            @db.VarChar(100)
+  email       String            @db.VarChar(255)
+  phone       String?           @db.VarChar(20)
+  coverLetter String            @db.Text
+  resumeUrl   String?           @db.VarChar(500)
+  status      ApplicationStatus @default(PENDING)
+
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@index([jobId])
+  @@index([email])
+  @@index([status])
+  @@map("applications")
+}
+
+enum ApplicationStatus {
+  PENDING
+  REVIEWED
+  SHORTLISTED
+  REJECTED
+}
+
+// ── Admins ───────────────────────────────────────────────────────────────────
+
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique @db.VarChar(255)
+  password  String   @db.VarChar(255) // bcrypt hash
+  name      String   @db.VarChar(100)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admins")
+}
