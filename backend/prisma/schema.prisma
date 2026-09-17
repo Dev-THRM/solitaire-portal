@@ -14,14 +14,15 @@ datasource db {
 
 model Job {
   id           String   @id @default(cuid())
-  title        String   @db.VarChar(255)
-  company      String   @db.VarChar(255)
-  location     String   @db.VarChar(255)
-  type         JobType
-  salary       String?  @db.VarChar(100)
-  description  String   @db.Text
-  requirements String   @db.Text
-  benefits     String?  @db.Text
+  title         String   @db.VarChar(255)
+  location      String   @db.VarChar(255)
+  type          JobType
+  experienceMin Int?
+  experienceMax Int?
+  salaryMin     Int?
+  salaryMax     Int?
+  description   String   @db.Text
+  requirements  String   @db.Text
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -59,6 +60,8 @@ model Application {
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
 
+  resume      Resume?
+
   @@index([jobId])
   @@index([email])
   @@index([status])
@@ -68,7 +71,10 @@ model Application {
 enum ApplicationStatus {
   PENDING
   REVIEWED
-  SHORTLISTED
+  CATEGORIZED
+  ACCEPTED
+  SWITCHED
+  ON_HOLD
   REJECTED
 }
 
@@ -83,4 +89,84 @@ model Admin {
   updatedAt DateTime @updatedAt
 
   @@map("admins")
+}
+
+// ── Categories (admin-editable taxonomy) ─────────────────────────────────────
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique @db.VarChar(150)
+  description String   @db.Text
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  candidateCategories CandidateCategory[]
+
+  @@map("categories")
+}
+
+// ── Resumes (extraction + categorization state) ───────────────────────────────
+
+model Resume {
+  id            String   @id @default(cuid())
+  applicationId String   @unique
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  rawText              String               @db.LongText
+  parsedSections       Json?                // { summary, experience, skills, education }
+  extractionStatus     ExtractionStatus     @default(PENDING)
+  extractionError      String?              @db.Text
+
+  categorizationStatus CategorizationStatus @default(PENDING)
+  categorizationError  String?              @db.Text
+  categorizedAt        DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  candidateCategories CandidateCategory[]
+
+  @@map("resumes")
+}
+
+enum ExtractionStatus {
+  PENDING
+  DONE
+  FAILED
+}
+
+enum CategorizationStatus {
+  PENDING
+  PROCESSING
+  DONE
+  FAILED
+}
+
+// ── CandidateCategories (LLM + manual overrides) ─────────────────────────────
+
+model CandidateCategory {
+  id         String  @id @default(cuid())
+  resumeId   String
+  resume     Resume  @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  confidence Float         // 0.0 – 1.0
+  evidence   String        @db.Text
+  source     CategorySource @default(LLM)
+  isActive   Boolean       @default(true) // false = admin soft-removed
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([resumeId, categoryId])
+  @@index([categoryId])
+  @@index([source])
+  @@map("candidate_categories")
+}
+
+enum CategorySource {
+  LLM
+  MANUAL
 }
