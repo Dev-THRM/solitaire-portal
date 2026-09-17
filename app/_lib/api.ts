@@ -27,7 +27,7 @@ export type Application = {
   phone?: string;
   coverLetter: string;
   resumeUrl?: string;
-  status: 'PENDING' | 'REVIEWED' | 'SHORTLISTED' | 'REJECTED';
+  status: 'PENDING' | 'REVIEWED' | 'CATEGORIZED' | 'ACCEPTED' | 'SWITCHED' | 'ON_HOLD' | 'REJECTED';
   createdAt: string;
 };
 
@@ -36,13 +36,52 @@ export type PaginatedJobs = {
   pagination: { page: number; limit: number; total: number; totalPages: number };
 };
 
+// ── Categorization types ─────────────────────────────────────────────────────
+
+export type Category = {
+  id: string;
+  name: string;
+  description: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  _count?: { candidateCategories: number };
+};
+
+export type ResumeStatus = {
+  id: string;
+  extractionStatus: 'PENDING' | 'DONE' | 'FAILED';
+  extractionError: string | null;
+  categorizationStatus: 'PENDING' | 'PROCESSING' | 'DONE' | 'FAILED';
+  categorizationError: string | null;
+  categorizedAt: string | null;
+  parsedSections: { summary: string; experience: string; skills: string; education: string } | null;
+} | null;
+
+export type CandidateCategory = {
+  id: string;
+  resumeId: string;
+  categoryId: string;
+  category: { id: string; name: string; description: string };
+  confidence: number;
+  evidence: string;
+  source: 'LLM' | 'MANUAL';
+  isActive: boolean;
+  createdAt: string;
+};
+
+// ── Fetch helper ─────────────────────────────────────────────────────────────
+
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
+  const isFormData = init?.body instanceof FormData;
+  const headers = new Headers(init?.headers);
+  if (!isFormData && !headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json');
+  }
+
   const res = await fetch(`${API_BASE}${path}`, {
     ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      ...init?.headers,
-    },
+    headers,
   });
 
   if (!res.ok) {
@@ -66,18 +105,10 @@ export async function getJob(id: string): Promise<{ success: boolean; data: Job 
 }
 
 // ── Applications ────────────────────────────────────────────────────────────
-export async function submitApplication(data: {
-  jobId: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone?: string;
-  coverLetter: string;
-  resumeUrl?: string;
-}): Promise<{ success: boolean; message: string }> {
+export async function submitApplication(data: FormData): Promise<{ success: boolean; message: string }> {
   return apiFetch('/api/apply', {
     method: 'POST',
-    body: JSON.stringify(data),
+    body: data,
   });
 }
 
@@ -128,6 +159,102 @@ export async function adminGetApplications(
   });
 }
 
+// ── Categories (taxonomy management) ────────────────────────────────────────
+export async function adminGetCategories(token: string): Promise<{ success: boolean; data: Category[] }> {
+  return apiFetch('/api/admin/categories', { headers: { Authorization: `Bearer ${token}` } });
+}
+
+export async function adminCreateCategory(token: string, data: { name: string; description: string }) {
+  return apiFetch<{ success: boolean; data: Category }>('/api/admin/categories', {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+export async function adminUpdateCategory(
+  token: string,
+  id: string,
+  data: { name?: string; description?: string; isActive?: boolean },
+) {
+  return apiFetch<{ success: boolean; data: Category }>(`/api/admin/categories/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+export async function adminDeactivateCategory(token: string, id: string) {
+  return apiFetch<{ success: boolean }>(`/api/admin/categories/${id}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+// ── Categorization (per-application) ────────────────────────────────────────
+export async function adminGetResumeStatus(
+  token: string,
+  applicationId: string,
+): Promise<{ success: boolean; data: ResumeStatus }> {
+  return apiFetch(`/api/admin/applications/${applicationId}/resume`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+export async function adminGetApplicationCategories(
+  token: string,
+  applicationId: string,
+): Promise<{ success: boolean; data: CandidateCategory[] }> {
+  return apiFetch(`/api/admin/applications/${applicationId}/categories`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+export async function adminTriggerCategorization(
+  token: string,
+  applicationId: string,
+): Promise<{ success: boolean; message: string }> {
+  return apiFetch(`/api/admin/applications/${applicationId}/categorize`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+export async function adminAddManualCategory(
+  token: string,
+  applicationId: string,
+  data: { categoryId: string; confidence?: number; evidence?: string },
+): Promise<{ success: boolean; data: CandidateCategory }> {
+  return apiFetch(`/api/admin/applications/${applicationId}/categories`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+export async function adminRemoveCategory(
+  token: string,
+  applicationId: string,
+  categoryId: string,
+) {
+  return apiFetch(`/api/admin/applications/${applicationId}/categories/${categoryId}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+export async function adminGetAlternateSuggestions(
+  token: string,
+  applicationId: string,
+): Promise<{
+  success: boolean;
+  data: { appliedJobTitle: string; threshold: number; suggestions: CandidateCategory[] };
+}> {
+  return apiFetch(`/api/admin/applications/${applicationId}/alternate-suggestions`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
 // ── Type labels ────────────────────────────────────────────────────────────
 export const JOB_TYPE_LABELS: Record<Job['type'], string> = {
   FULL_TIME: 'Full Time',
@@ -140,6 +267,9 @@ export const JOB_TYPE_LABELS: Record<Job['type'], string> = {
 export const STATUS_LABELS: Record<Application['status'], string> = {
   PENDING: 'Pending',
   REVIEWED: 'Reviewed',
-  SHORTLISTED: 'Shortlisted',
+  CATEGORIZED: 'Categorized',
+  ACCEPTED: 'Accepted',
+  SWITCHED: 'Switched',
+  ON_HOLD: 'On Hold',
   REJECTED: 'Rejected',
 };
