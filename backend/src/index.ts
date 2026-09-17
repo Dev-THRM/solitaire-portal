@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import path from 'path';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
@@ -7,6 +8,8 @@ import rateLimit from 'express-rate-limit';
 import jobsRouter from './routes/jobs.routes';
 import applicationsRouter from './routes/applications.routes';
 import authRouter from './routes/auth.routes';
+import categoriesRouter from './routes/categories.routes';
+import categorizationRouter from './routes/categorization.routes';
 // [DISABLED FOR BASIC TESTING]
 // import { verifyEmailConfig } from './config/email';
 import prisma from './config/db';
@@ -25,6 +28,9 @@ app.use(
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
 
+// Serve uploaded files statically
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
 // ── Rate Limiting ─────────────────────────────────────────────────────────────
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -33,11 +39,7 @@ const apiLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-const applyLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 5, // max 5 applications per IP per hour
-  message: { success: false, error: 'Too many applications, please try again later' },
-});
+
 
 app.use('/api', apiLimiter);
 
@@ -48,7 +50,9 @@ app.get('/health', (_req, res) => {
 
 app.use('/api/auth', authRouter);
 app.use('/api/jobs', jobsRouter);
-app.use('/api/apply', applyLimiter, applicationsRouter);
+app.use('/api/apply', applicationsRouter);
+app.use('/api/admin/categories', categoriesRouter);
+app.use('/api/admin/applications', categorizationRouter);
 
 // ── 404 Handler ───────────────────────────────────────────────────────────────
 app.use((_req, res) => {

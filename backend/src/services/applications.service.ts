@@ -1,5 +1,7 @@
+import path from 'path';
 import prisma from '../config/db';
 import { CreateApplicationDto } from '../types';
+import { extractAndCategorize } from './categorization.service';
 // [DISABLED FOR BASIC TESTING]
 // import { sendApplicationEmail, sendConfirmationEmail } from './email.service';
 // import { appendApplicationToSheet } from './sheets.service';
@@ -19,7 +21,18 @@ export async function createApplication(data: CreateApplicationDto) {
   // 3. Persist the application
   const application = await prisma.application.create({ data });
 
-  // 4. [DISABLED FOR BASIC TESTING] Fire-and-forget: email + Sheets
+  // 4. Fire-and-forget: extract resume text + categorize via Gemini
+  if (data.resumeUrl) {
+    // Derive the local disk path from the URL (filename only)
+    const filename = data.resumeUrl.split('/').pop() ?? '';
+    const filePath = path.join(__dirname, '../../uploads', filename);
+    // Non-blocking — errors are caught inside extractAndCategorize
+    extractAndCategorize(application.id, filePath).catch((err) =>
+      console.error('[categorization] Unexpected error:', err),
+    );
+  }
+
+  // 5. [DISABLED FOR BASIC TESTING] Fire-and-forget: email + Sheets
   // const appliedAt = new Date().toLocaleString('en-IN', {
   //   timeZone: 'Asia/Kolkata',
   //   dateStyle: 'medium',
@@ -66,7 +79,7 @@ export async function listApplications(jobId?: string) {
     where: jobId ? { jobId } : undefined,
     orderBy: { createdAt: 'desc' },
     include: {
-      job: { select: { title: true, company: true } },
+      job: { select: { title: true, location: true } },
     },
   });
 }

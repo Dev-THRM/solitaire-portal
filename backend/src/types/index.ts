@@ -7,13 +7,14 @@ export interface AuthPayload {
 
 export interface CreateJobDto {
   title: string;
-  company: string;
   location: string;
   type: 'FULL_TIME' | 'PART_TIME' | 'REMOTE' | 'CONTRACT' | 'INTERNSHIP';
-  salary?: string;
+  experienceMin?: number;
+  experienceMax?: number;
+  salaryMin?: number;
+  salaryMax?: number;
   description: string;
   requirements: string;
-  benefits?: string;
   isActive?: boolean;
 }
 
