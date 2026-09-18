@@ -29,8 +29,15 @@ export async function extractText(filePath: string): Promise<string> {
 }
 
 async function extractFromPdf(filePath: string): Promise<string> {
-  const absolutePath = path.resolve(filePath);
-  const parser = new PDFParse({ url: absolutePath });
+  // If it's already an HTTP(S) URL, pass it directly — PDFParse v2 can fetch it.
+  // Otherwise convert a local file path to a proper file:// URL.
+  let url: string;
+  if (filePath.startsWith('http://') || filePath.startsWith('https://')) {
+    url = filePath;
+  } else {
+    url = 'file:///' + path.resolve(filePath).replace(/\\/g, '/');
+  }
+  const parser = new PDFParse({ url });
   const data = await parser.getText();
   return data.text;
 }

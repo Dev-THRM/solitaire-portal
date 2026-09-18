@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import prisma from '../config/db';
-import { categorizeResume } from '../services/categorization.service';
+import { categorizeResume, extractAndCategorize } from '../services/categorization.service';
 
 const CONFIDENCE_THRESHOLD = parseFloat(
   process.env.CATEGORIZATION_CONFIDENCE_THRESHOLD ?? '0.65',
@@ -68,11 +68,38 @@ export async function triggerCategorization(req: Request, res: Response): Promis
       return;
     }
 
+    // If extraction never succeeded, re-run the full pipeline (extract + categorize)
     if (resume.extractionStatus !== 'DONE') {
-      res.status(400).json({ success: false, error: 'Resume text extraction has not completed yet.' });
+      const application = await prisma.application.findUnique({
+        where: { id: applicationId },
+        select: { resumeUrl: true },
+      });
+
+      if (!application?.resumeUrl) {
+        res.status(400).json({ success: false, error: 'No resume file path found for this application.' });
+        return;
+      }
+
+      // Reset statuses so the UI shows extraction in progress
+      await prisma.resume.update({
+        where: { id: resume.id },
+        data: {
+          extractionStatus: 'PENDING',
+          extractionError: null,
+          categorizationStatus: 'PENDING',
+          categorizationError: null,
+        },
+      });
+
+      extractAndCategorize(applicationId, application.resumeUrl).catch((err) =>
+        console.error('[extraction] Triggered re-run error:', err),
+      );
+
+      res.json({ success: true, message: 'Re-extraction and categorization started. Check back in a few seconds.' });
       return;
     }
 
+    // Extraction already done — just re-run categorization
     categorizeResume(resume.id).catch((err) =>
       console.error('[categorization] Triggered re-run error:', err),
     );

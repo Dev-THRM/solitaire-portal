@@ -176,7 +176,7 @@ async function callGeminiWithRetry(
   maxRetries = 3,
 ): Promise<string> {
   const genAI = getGeminiClient();
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-3.6-flash' });
 
   let lastError: Error | null = null;
 

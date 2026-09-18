@@ -165,7 +165,11 @@ function CategoriesPanel({ app }: { app: Application }) {
 
   const catStatus = resumeStatus?.categorizationStatus;
   const extStatus = resumeStatus?.extractionStatus;
-  const canCategorize = resumeStatus && extStatus === 'DONE' && catStatus !== 'PROCESSING';
+  const hasFailed = extStatus === 'FAILED' || catStatus === 'FAILED';
+  const canCategorize = resumeStatus && (
+    (extStatus === 'DONE' && catStatus !== 'PROCESSING') ||
+    hasFailed
+  );
   const isProcessing = catStatus === 'PROCESSING' || extStatus === 'PENDING';
 
   // Categories already assigned to this applicant (by categoryId)
@@ -192,15 +196,23 @@ function CategoriesPanel({ app }: { app: Application }) {
           style={{
             display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px',
             borderRadius: 10, border: 'none', cursor: canCategorize ? 'pointer' : 'not-allowed',
-            background: canCategorize ? 'var(--color-primary)' : 'var(--color-surface-2)',
-            color: canCategorize ? 'white' : 'var(--color-text-muted)',
+            background: hasFailed
+              ? '#fee2e2'
+              : canCategorize
+                ? 'var(--color-primary)'
+                : 'var(--color-surface-2)',
+            color: hasFailed
+              ? '#dc2626'
+              : canCategorize
+                ? 'white'
+                : 'var(--color-text-muted)',
             fontSize: 13, fontWeight: 600, transition: 'all 0.2s',
             opacity: triggering ? 0.6 : 1,
           }}
-          title={!resumeStatus ? 'No resume extracted yet' : catStatus === 'PROCESSING' ? 'Processing…' : 'Re-run categorization'}
+          title={!resumeStatus ? 'No resume extracted yet' : catStatus === 'PROCESSING' ? 'Processing…' : hasFailed ? 'Retry extraction & categorization' : 'Re-run categorization'}
         >
           <RefreshCw size={14} style={{ animation: isProcessing ? 'spin 1s linear infinite' : 'none' }} />
-          {catStatus === 'DONE' ? 'Re-run' : 'Categorize'}
+          {hasFailed ? 'Retry' : catStatus === 'DONE' ? 'Re-run' : 'Categorize'}
         </button>
       </div>
 
