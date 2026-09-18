@@ -1,7 +1,5 @@
-import fs from 'fs';
 import path from 'path';
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const pdfParse = require('pdf-parse') as (buffer: Buffer) => Promise<{ text: string }>;
+import { PDFParse } from 'pdf-parse';
 import mammoth from 'mammoth';
 
 export interface ParsedSections {
@@ -31,8 +29,9 @@ export async function extractText(filePath: string): Promise<string> {
 }
 
 async function extractFromPdf(filePath: string): Promise<string> {
-  const buffer = fs.readFileSync(filePath);
-  const data = await pdfParse(buffer);
+  const absolutePath = path.resolve(filePath);
+  const parser = new PDFParse({ url: absolutePath });
+  const data = await parser.getText();
   return data.text;
 }
 
