@@ -1,4 +1,7 @@
 import { Router } from 'express';
+import multer from 'multer';
+import path from 'path';
+import { v4 as uuidv4 } from 'uuid';
 import {
   applyForJob,
   listApplications,
@@ -8,6 +11,37 @@ import {
 import { authenticate } from '../middleware/auth.middleware';
 import { validate } from '../middleware/validate.middleware';
 import { z } from 'zod';
+import rateLimit from 'express-rate-limit';
+
+const applyLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5, // max 5 applications per IP per hour
+  message: { success: false, error: 'Too many applications, please try again later' },
+});
+
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, '../../uploads'));
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, `${uuidv4()}${ext}`);
+  }
+});
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: (req, file, cb) => {
+    const allowed = ['.pdf', '.doc', '.docx'];
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (allowed.includes(ext)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only PDF and DOC/DOCX are allowed.'));
+    }
+  }
+});
 
 const router = Router();
 
@@ -17,16 +51,16 @@ const ApplicationSchema = z.object({
   lastName: z.string().min(1).max(100),
   email: z.string().email(),
   phone: z.string().optional(),
-  coverLetter: z.string().min(50, 'Cover letter must be at least 50 characters'),
-  resumeUrl: z.string().url().optional().or(z.literal('')),
+  coverLetter: z.string().optional(),
+  // resumeUrl is no longer in body; it comes from req.file
 });
 
 const StatusSchema = z.object({
-  status: z.enum(['PENDING', 'REVIEWED', 'SHORTLISTED', 'REJECTED']),
+  status: z.enum(['PENDING', 'REVIEWED', 'CATEGORIZED', 'ACCEPTED', 'SWITCHED', 'ON_HOLD', 'REJECTED']),
 });
 
 // ── Public routes ─────────────────────────────────────────────────────────────
-router.post('/', validate(ApplicationSchema), applyForJob);
+router.post('/', applyLimiter, upload.single('resumeFile'), validate(ApplicationSchema), applyForJob);
 
 // ── Admin routes ──────────────────────────────────────────────────────────────
 router.get('/admin', authenticate, listApplications);

@@ -1,4 +1,5 @@
 import prisma from '../config/db';
+import { Prisma } from '@prisma/client';
 import { CreateJobDto, UpdateJobDto, JobQueryParams } from '../types';
 
 const PAGE_SIZE = 10;
@@ -8,14 +9,13 @@ export async function listJobs(params: JobQueryParams) {
   const limit = Math.min(50, parseInt(params.limit ?? String(PAGE_SIZE)));
   const skip = (page - 1) * limit;
 
-  const where: Parameters<typeof prisma.job.findMany>[0]['where'] = {
+  const where: Prisma.JobWhereInput = {
     isActive: true,
   };
 
   if (params.search) {
     where.OR = [
       { title: { contains: params.search } },
-      { company: { contains: params.search } },
       { description: { contains: params.search } },
     ];
   }
@@ -37,10 +37,12 @@ export async function listJobs(params: JobQueryParams) {
       select: {
         id: true,
         title: true,
-        company: true,
         location: true,
         type: true,
-        salary: true,
+        experienceMin: true,
+        experienceMax: true,
+        salaryMin: true,
+        salaryMax: true,
         isActive: true,
         createdAt: true,
         _count: { select: { applications: true } },

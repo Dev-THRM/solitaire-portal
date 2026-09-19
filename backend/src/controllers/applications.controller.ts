@@ -4,7 +4,16 @@ import * as applicationsService from '../services/applications.service';
 // Public: POST /api/apply
 export async function applyForJob(req: Request, res: Response): Promise<void> {
   try {
-    const application = await applicationsService.createApplication(req.body);
+    if (!req.file) {
+      res.status(400).json({ success: false, error: 'Resume document is required' });
+      return;
+    }
+
+    const data = { ...req.body };
+    data.resumeUrl = `${process.env.API_URL || 'http://localhost:4000'}/uploads/${req.file.filename}`;
+    if (!data.coverLetter) data.coverLetter = '';
+
+    const application = await applicationsService.createApplication(data);
     res.status(201).json({
       success: true,
       data: { id: application.id },
@@ -43,7 +52,7 @@ export async function listApplications(req: Request, res: Response): Promise<voi
 // Admin: GET /api/admin/applications/:id
 export async function getApplication(req: Request, res: Response): Promise<void> {
   try {
-    const application = await applicationsService.getApplicationById(req.params.id);
+    const application = await applicationsService.getApplicationById(req.params.id as string);
     if (!application) {
       res.status(404).json({ success: false, error: 'Application not found' });
       return;
@@ -58,7 +67,7 @@ export async function getApplication(req: Request, res: Response): Promise<void>
 export async function updateStatus(req: Request, res: Response): Promise<void> {
   try {
     const { status } = req.body;
-    const application = await applicationsService.updateApplicationStatus(req.params.id, status);
+    const application = await applicationsService.updateApplicationStatus(req.params.id as string, status);
     res.json({ success: true, data: application });
   } catch (err) {
     res.status(500).json({ success: false, error: 'Failed to update status' });

@@ -15,7 +15,7 @@ export async function listJobs(req: Request, res: Response): Promise<void> {
 // Public: GET /api/jobs/:id
 export async function getJob(req: Request, res: Response): Promise<void> {
   try {
-    const job = await jobsService.getJobById(req.params.id);
+    const job = await jobsService.getJobById(req.params.id as string);
     if (!job) {
       res.status(404).json({ success: false, error: 'Job not found' });
       return;
@@ -49,7 +49,7 @@ export async function createJob(req: Request, res: Response): Promise<void> {
 // Admin: PUT /api/admin/jobs/:id
 export async function updateJob(req: Request, res: Response): Promise<void> {
   try {
-    const job = await jobsService.updateJob(req.params.id, req.body);
+    const job = await jobsService.updateJob(req.params.id as string, req.body);
     res.json({ success: true, data: job });
   } catch (err) {
     res.status(500).json({ success: false, error: 'Failed to update job' });
@@ -59,7 +59,7 @@ export async function updateJob(req: Request, res: Response): Promise<void> {
 // Admin: DELETE /api/admin/jobs/:id
 export async function deleteJob(req: Request, res: Response): Promise<void> {
   try {
-    await jobsService.deleteJob(req.params.id);
+    await jobsService.deleteJob(req.params.id as string);
     res.status(204).send();
   } catch (err) {
     res.status(500).json({ success: false, error: 'Failed to delete job' });

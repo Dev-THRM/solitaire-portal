@@ -9,13 +9,14 @@ const router = Router();
 
 const JobSchema = z.object({
   title: z.string().min(3),
-  company: z.string().min(1),
   location: z.string().min(1),
   type: z.enum(['FULL_TIME', 'PART_TIME', 'REMOTE', 'CONTRACT', 'INTERNSHIP']),
-  salary: z.string().optional(),
+  experienceMin: z.number().int().nonnegative().optional(),
+  experienceMax: z.number().int().nonnegative().optional(),
+  salaryMin: z.number().int().nonnegative().optional(),
+  salaryMax: z.number().int().nonnegative().optional(),
   description: z.string().min(10),
   requirements: z.string().min(10),
-  benefits: z.string().optional(),
   isActive: z.boolean().optional(),
 });
 
