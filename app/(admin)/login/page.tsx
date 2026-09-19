@@ -40,25 +40,14 @@ export default function LoginPage() {
     }}>
       <div style={{ width: '100%', maxWidth: 420 }}>
         {/* Logo */}
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div style={{
-            width: 56, height: 56,
-            background: 'var(--gradient-hero)',
-            borderRadius: 16,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 28,
-            margin: '0 auto 16px',
-            boxShadow: '0 8px 24px rgba(99,102,241,0.35)',
-          }}>
-            💼
-          </div>
+        <div style={{ textAlign: 'center', marginBottom: 40 }}>
           <h1 style={{ fontSize: 26 }}>Admin Login</h1>
           <p style={{ color: 'var(--color-text-muted)', fontSize: 14, marginTop: 6 }}>
             Sign in to manage your job portal
           </p>
         </div>
 
-        <div className="card" style={{ padding: 32 }}>
+        <div className="card" style={{ padding: 40, background: 'white', borderRadius: 'var(--radius-xl)', boxShadow: '0 8px 32px rgba(0,0,0,0.06)' }}>
           {error && (
             <div style={{
               background: 'hsl(0,84%,95%)',
@@ -73,30 +62,50 @@ export default function LoginPage() {
             </div>
           )}
 
-          <form id="admin-login-form" onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-            <div className="form-group">
-              <label htmlFor="login-email" className="form-label">Email Address</label>
+          <form id="admin-login-form" onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <label htmlFor="login-email" style={{ fontSize: 14, fontWeight: 500, color: 'var(--color-text)' }}>Email Address</label>
               <input
                 id="login-email"
                 type="email"
-                className="input"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@example.com"
                 required
                 autoFocus
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--color-border)',
+                  fontSize: 15,
+                  outline: 'none',
+                  transition: 'border-color 0.2s'
+                }}
+                onFocus={(e) => e.target.style.borderColor = 'var(--color-primary)'}
+                onBlur={(e) => e.target.style.borderColor = 'var(--color-border)'}
               />
             </div>
-            <div className="form-group">
-              <label htmlFor="login-password" className="form-label">Password</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <label htmlFor="login-password" style={{ fontSize: 14, fontWeight: 500, color: 'var(--color-text)' }}>Password</label>
               <input
                 id="login-password"
                 type="password"
-                className="input"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--color-border)',
+                  fontSize: 15,
+                  outline: 'none',
+                  transition: 'border-color 0.2s'
+                }}
+                onFocus={(e) => e.target.style.borderColor = 'var(--color-primary)'}
+                onBlur={(e) => e.target.style.borderColor = 'var(--color-border)'}
               />
             </div>
             <button

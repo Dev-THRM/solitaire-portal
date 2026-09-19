@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { adminGetJobs, adminGetApplications, type Job, type Application, JOB_TYPE_LABELS } from '@/app/_lib/api';
+import { adminGetJobs, adminGetApplications, type Job, type Application } from '@/app/_lib/api';
 import { getToken, getAdminInfo } from '@/app/_lib/auth';
+import { Briefcase, Inbox, Activity, AlertCircle, ArrowRight, User } from 'lucide-react';
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -35,108 +36,141 @@ export default function AdminDashboard() {
   }).length;
 
   const STATS = [
-    { label: 'Total Jobs', value: jobs.length, icon: '💼', color: '#6366f1', sub: `${activeJobs} active` },
-    { label: 'Applications', value: applications.length, icon: '📨', color: '#8b5cf6', sub: `${todayApps} today` },
-    { label: 'Active Listings', value: activeJobs, icon: '✅', color: '#22c55e', sub: `${jobs.length - activeJobs} paused` },
-    { label: 'Pending Review', value: applications.filter((a) => a.status === 'PENDING').length, icon: '⏳', color: '#f59e0b', sub: 'need attention' },
+    { label: 'Total Jobs', value: jobs.length, icon: Briefcase, color: 'var(--color-primary)', sub: `${activeJobs} active` },
+    { label: 'Applications', value: applications.length, icon: Inbox, color: '#3b82f6', sub: `${todayApps} today` },
+    { label: 'Active Listings', value: activeJobs, icon: Activity, color: '#10b981', sub: `${jobs.length - activeJobs} paused` },
+    { label: 'Pending Review', value: applications.filter((a) => a.status === 'PENDING').length, icon: AlertCircle, color: '#f59e0b', sub: 'need attention' },
   ];
 
   if (loading) return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      {[...Array(4)].map((_, i) => <div key={i} className="skeleton" style={{ height: 96, borderRadius: 16 }} />)}
+    <div className="bento-grid" style={{ gap: 24, maxWidth: 1200 }}>
+      {[...Array(4)].map((_, i) => <div key={i} className="bento-col-3 skeleton" style={{ height: 140, borderRadius: 24 }} />)}
     </div>
   );
 
   return (
-    <div style={{ maxWidth: 1000 }}>
+    <div style={{ maxWidth: 1200 }}>
       {/* Header */}
-      <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontSize: 28, marginBottom: 6 }}>
-          Welcome back, {admin?.name ?? 'Admin'} 👋
-        </h1>
-        <p style={{ color: 'var(--color-text-muted)' }}>
-          Here's what's happening with your job portal
-        </p>
+      <div style={{ marginBottom: 40, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+        <div>
+          <h1 style={{ fontSize: 32, marginBottom: 8, color: 'var(--color-primary)' }}>
+            Welcome back, {admin?.name?.split(' ')[0] ?? 'Admin'}
+          </h1>
+          <p style={{ color: 'var(--color-text-muted)', fontSize: 16 }}>
+            Here's what's happening with your job portal today.
+          </p>
+        </div>
+        <div style={{ display: 'flex', gap: 16 }}>
+          <Link href="/admin/jobs/new" className="btn btn-primary btn-lg" style={{ borderRadius: 12, boxShadow: '0 10px 25px rgba(30,73,106,0.2)' }}>
+            + Post New Job
+          </Link>
+        </div>
       </div>
 
-      {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 20, marginBottom: 36 }}>
-        {STATS.map((stat) => (
-          <div key={stat.label} style={{
-            background: 'var(--color-surface)',
-            borderRadius: 'var(--radius-lg)',
+      {/* Bento Grid Stats */}
+      <div className="bento-grid" style={{ marginBottom: 48 }}>
+        {STATS.map((stat, idx) => (
+          <div key={stat.label} className="bento-col-3" style={{
+            background: 'white',
+            borderRadius: 24,
+            padding: 28,
+            boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
             border: '1px solid var(--color-border)',
-            padding: '20px 22px',
-            boxShadow: 'var(--shadow-sm)',
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div>
-                <p style={{ fontSize: 13, color: 'var(--color-text-muted)', marginBottom: 4 }}>{stat.label}</p>
-                <p style={{ fontSize: 30, fontWeight: 800, fontFamily: 'var(--font-display)', color: stat.color }}>
+            transition: 'transform 0.2s',
+            cursor: 'default',
+          }}
+          onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+          onMouseOut={(e) => e.currentTarget.style.transform = 'none'}
+          >
+            <div>
+              <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--color-text-muted)', marginBottom: 8 }}>{stat.label}</p>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
+                <p style={{ fontSize: 40, fontWeight: 800, fontFamily: 'var(--font-display)', color: 'var(--color-text)', lineHeight: 1 }}>
                   {stat.value}
                 </p>
-                <p style={{ fontSize: 12, color: 'var(--color-text-subtle)', marginTop: 4 }}>{stat.sub}</p>
               </div>
-              <span style={{ fontSize: 28 }}>{stat.icon}</span>
+              <p style={{ fontSize: 13, fontWeight: 500, color: stat.color, marginTop: 12, background: `${stat.color}15`, display: 'inline-block', padding: '4px 10px', borderRadius: 12 }}>
+                {stat.sub}
+              </p>
+            </div>
+            <div style={{
+              width: 64, height: 64,
+              borderRadius: 16,
+              background: `${stat.color}10`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: stat.color
+            }}>
+              <stat.icon size={32} strokeWidth={1.5} />
             </div>
           </div>
         ))}
       </div>
 
-      {/* Quick Actions */}
-      <div style={{ display: 'flex', gap: 16, marginBottom: 36, flexWrap: 'wrap' }}>
-        <Link href="/admin/jobs/new" id="dash-new-job-btn" className="btn btn-primary">
-          + Post New Job
-        </Link>
-        <Link href="/admin/applications" id="dash-view-apps-btn" className="btn btn-outline">
-          View All Applications
-        </Link>
-      </div>
-
-      {/* Recent Applications */}
-      <div style={{
-        background: 'var(--color-surface)',
-        borderRadius: 'var(--radius-lg)',
-        border: '1px solid var(--color-border)',
-        overflow: 'hidden',
-      }}>
-        <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between' }}>
-          <h2 style={{ fontSize: 17 }}>Recent Applications</h2>
-          <Link href="/admin/applications" style={{ fontSize: 13, color: 'var(--color-primary)' }}>View all →</Link>
-        </div>
-        {applications.slice(0, 5).length === 0 ? (
-          <div style={{ padding: 48, textAlign: 'center', color: 'var(--color-text-muted)' }}>
-            No applications yet
+      {/* Recent Applications Bento Block */}
+      <div className="bento-grid">
+        <div className="bento-col-12" style={{
+          background: 'white',
+          borderRadius: 24,
+          border: '1px solid var(--color-border)',
+          overflow: 'hidden',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
+        }}>
+          <div style={{ padding: '24px 32px', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h2 style={{ fontSize: 20, color: 'var(--color-primary)' }}>Recent Applications</h2>
+            <Link href="/admin/applications" style={{ fontSize: 14, fontWeight: 500, color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: 6 }}>
+              View all <ArrowRight size={16} />
+            </Link>
           </div>
-        ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ background: 'var(--color-surface-2)' }}>
-                {['Applicant', 'Job', 'Status', 'Date'].map((h) => (
-                  <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
+          {applications.slice(0, 5).length === 0 ? (
+            <div style={{ padding: 64, textAlign: 'center', color: 'var(--color-text-muted)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+              <Inbox size={48} opacity={0.2} />
+              <p>No applications yet</p>
+            </div>
+          ) : (
+            <div>
               {applications.slice(0, 5).map((app, i) => (
-                <tr key={app.id} style={{ borderTop: '1px solid var(--color-border)', background: i % 2 === 0 ? 'transparent' : 'var(--color-surface-2)' }}>
-                  <td style={{ padding: '12px 16px', fontSize: 14, fontWeight: 500 }}>{app.firstName} {app.lastName}</td>
-                  <td style={{ padding: '12px 16px', fontSize: 14, color: 'var(--color-text-muted)' }}>{app.job?.title}</td>
-                  <td style={{ padding: '12px 16px' }}>
-                    <span className={`badge ${app.status === 'PENDING' ? 'badge-warning' : app.status === 'SHORTLISTED' ? 'badge-success' : app.status === 'REJECTED' ? 'badge-error' : 'badge-neutral'}`}>
+                <Link href={`/admin/applications?id=${app.id}`} key={app.id} style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: '2fr 2fr 1fr 1fr', 
+                  alignItems: 'center',
+                  padding: '20px 32px', 
+                  borderBottom: i === applications.slice(0,5).length - 1 ? 'none' : '1px solid var(--color-border)',
+                  textDecoration: 'none',
+                  color: 'inherit',
+                  transition: 'background 0.2s'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.background = 'var(--color-surface-2)'}
+                onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                    <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--color-surface-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-primary)' }}>
+                      <User size={20} />
+                    </div>
+                    <div>
+                      <p style={{ fontWeight: 600, fontSize: 15, color: 'var(--color-text)' }}>{app.firstName} {app.lastName}</p>
+                      <p style={{ fontSize: 13, color: 'var(--color-text-muted)', marginTop: 2 }}>{app.email}</p>
+                    </div>
+                  </div>
+                  <div>
+                    <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--color-text)' }}>{app.job?.title}</p>
+                    <p style={{ fontSize: 13, color: 'var(--color-text-muted)', marginTop: 2 }}>{app.job?.location}</p>
+                  </div>
+                  <div>
+                    <span className={`badge ${app.status === 'PENDING' ? 'badge-warning' : app.status === 'SHORTLISTED' ? 'badge-success' : app.status === 'REJECTED' ? 'badge-error' : 'badge-neutral'}`} style={{ padding: '6px 12px' }}>
                       {app.status}
                     </span>
-                  </td>
-                  <td style={{ padding: '12px 16px', fontSize: 13, color: 'var(--color-text-subtle)' }}>
-                    {new Date(app.createdAt).toLocaleDateString('en-IN')}
-                  </td>
-                </tr>
+                  </div>
+                  <div style={{ textAlign: 'right', fontSize: 13, color: 'var(--color-text-subtle)', fontWeight: 500 }}>
+                    {new Date(app.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  </div>
+                </Link>
               ))}
-            </tbody>
-          </table>
-        )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

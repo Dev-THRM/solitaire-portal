@@ -79,7 +79,7 @@ export default function CategoriesPage() {
   const inactive = categories.filter((c) => !c.isActive);
 
   if (loading) return (
-    <div style={{ maxWidth: 860 }}>
+    <div style={{ width: '100%', maxWidth: 1200 }}>
       {[...Array(5)].map((_, i) => (
         <div key={i} className="skeleton" style={{ height: 80, borderRadius: 16, marginBottom: 12 }} />
       ))}
@@ -87,7 +87,7 @@ export default function CategoriesPage() {
   );
 
   return (
-    <div style={{ maxWidth: 860 }}>
+    <div style={{ width: '100%', maxWidth: 1200 }}>
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
         <div>
@@ -178,186 +178,123 @@ export default function CategoriesPage() {
         </div>
       )}
 
-      {/* Active categories */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {active.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '60px 24px', background: 'white', borderRadius: 20, border: '1px solid var(--color-border)' }}>
-            <Tag size={40} color="var(--color-text-muted)" opacity={0.3} style={{ marginBottom: 16 }} />
-            <p style={{ color: 'var(--color-text-muted)' }}>No categories yet. Add one above to start.</p>
-          </div>
-        )}
-
-        {active.map((cat) => {
-          const isEditing = editingId === cat.id;
-          const isExpanded = expandedId === cat.id;
-          const usageCount = cat._count?.candidateCategories ?? 0;
-
-          return (
-            <div
-              key={cat.id}
-              style={{
-                background: 'white', borderRadius: 20, border: '1px solid var(--color-border)',
-                overflow: 'hidden', boxShadow: '0 2px 10px rgba(0,0,0,0.02)',
-                transition: 'box-shadow 0.2s',
-              }}
-            >
-              {isEditing ? (
-                /* Edit form */
-                <div style={{ padding: 24 }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                    <input
-                      id={`edit-name-${cat.id}`}
-                      value={editForm.name}
-                      onChange={(e) => setEditForm((p) => ({ ...p, name: e.target.value }))}
-                      placeholder="Category name"
-                      style={{
-                        padding: '10px 14px', borderRadius: 10, border: '1.5px solid var(--color-primary)',
-                        fontSize: 15, fontFamily: 'inherit', fontWeight: 600, outline: 'none',
-                      }}
-                    />
-                    <textarea
-                      id={`edit-desc-${cat.id}`}
-                      value={editForm.description}
-                      onChange={(e) => setEditForm((p) => ({ ...p, description: e.target.value }))}
-                      placeholder="Description"
-                      rows={2}
-                      style={{
-                        padding: '10px 14px', borderRadius: 10, border: '1.5px solid var(--color-border)',
-                        fontSize: 14, fontFamily: 'inherit', outline: 'none', resize: 'vertical',
-                      }}
-                    />
-                    <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-                      <button onClick={() => setEditingId(null)} className="btn btn-ghost" style={{ borderRadius: 8, padding: '8px 14px' }}>
-                        <X size={16} /> Cancel
-                      </button>
-                      <button
-                        onClick={() => handleUpdate(cat.id)}
-                        disabled={saving}
-                        className="btn btn-primary"
-                        style={{ borderRadius: 8, padding: '8px 14px' }}
-                      >
-                        <Check size={16} /> Save
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                /* Display row */
-                <div>
-                  <div
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 16, padding: '20px 24px',
-                      cursor: 'pointer',
-                    }}
-                    onClick={() => setExpandedId(isExpanded ? null : cat.id)}
-                  >
-                    <div style={{
-                      width: 44, height: 44, borderRadius: 12, flexShrink: 0,
-                      background: 'var(--color-primary-light)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-primary)',
-                    }}>
-                      <Tag size={22} />
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontWeight: 700, fontSize: 16, color: 'var(--color-text)', marginBottom: 2 }}>
-                        {cat.name}
-                      </div>
-                      {!isExpanded && (
-                        <div style={{
-                          fontSize: 13, color: 'var(--color-text-muted)',
-                          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                        }}>
+      {/* Categories Datatable */}
+      <div style={{ background: 'white', borderRadius: 16, border: '1px solid var(--color-border)', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+          <thead style={{ background: 'var(--color-surface-2)', borderBottom: '1px solid var(--color-border)' }}>
+            <tr>
+              <th style={{ padding: '16px 24px', fontSize: 13, fontWeight: 600, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Name</th>
+              <th style={{ padding: '16px 24px', fontSize: 13, fontWeight: 600, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Description</th>
+              <th style={{ padding: '16px 24px', fontSize: 13, fontWeight: 600, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Usage</th>
+              <th style={{ padding: '16px 24px', fontSize: 13, fontWeight: 600, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Status</th>
+              <th style={{ padding: '16px 24px', fontSize: 13, fontWeight: 600, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: 0.5, textAlign: 'right' }}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {categories.length === 0 ? (
+              <tr>
+                <td colSpan={5} style={{ textAlign: 'center', padding: '60px 24px', color: 'var(--color-text-muted)' }}>
+                  <Tag size={40} opacity={0.3} style={{ marginBottom: 16, margin: '0 auto' }} />
+                  <p>No categories yet. Add one above to start.</p>
+                </td>
+              </tr>
+            ) : (
+              categories.map((cat, idx) => {
+                const isEditing = editingId === cat.id;
+                const usageCount = cat._count?.candidateCategories ?? 0;
+                
+                return (
+                  <tr key={cat.id} style={{ 
+                    borderBottom: idx === categories.length - 1 ? 'none' : '1px solid var(--color-border)',
+                    transition: 'background 0.2s ease',
+                    background: !cat.isActive ? 'var(--color-surface-2)' : 'transparent',
+                    opacity: !cat.isActive ? 0.7 : 1
+                  }}>
+                    <td style={{ padding: '16px 24px' }}>
+                      {isEditing ? (
+                        <input
+                          value={editForm.name}
+                          onChange={(e) => setEditForm((p) => ({ ...p, name: e.target.value }))}
+                          style={{ padding: '8px 12px', borderRadius: 8, border: '1.5px solid var(--color-primary)', fontSize: 14, width: '100%', outline: 'none' }}
+                        />
+                      ) : (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                          <div style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--color-primary-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-primary)' }}>
+                            <Tag size={18} />
+                          </div>
+                          <span style={{ fontWeight: 600, fontSize: 15, color: 'var(--color-text)', textDecoration: !cat.isActive ? 'line-through' : 'none' }}>{cat.name}</span>
+                        </div>
+                      )}
+                    </td>
+                    <td style={{ padding: '16px 24px' }}>
+                      {isEditing ? (
+                        <textarea
+                          value={editForm.description}
+                          onChange={(e) => setEditForm((p) => ({ ...p, description: e.target.value }))}
+                          rows={1}
+                          style={{ padding: '8px 12px', borderRadius: 8, border: '1.5px solid var(--color-border)', fontSize: 13, width: '100%', resize: 'vertical', outline: 'none' }}
+                        />
+                      ) : (
+                        <div style={{ fontSize: 14, color: 'var(--color-text-muted)', maxWidth: 300, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={cat.description}>
                           {cat.description}
                         </div>
                       )}
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 13, color: 'var(--color-text-muted)' }}>
+                    </td>
+                    <td style={{ padding: '16px 24px', fontSize: 14, color: 'var(--color-text-muted)', fontWeight: 500 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         <Users size={14} /> {usageCount}
+                      </div>
+                    </td>
+                    <td style={{ padding: '16px 24px' }}>
+                      <span style={{ 
+                        background: cat.isActive ? '#dcfce7' : 'var(--color-border)', 
+                        color: cat.isActive ? '#166534' : 'var(--color-text-muted)', 
+                        fontSize: 11, fontWeight: 600, letterSpacing: 0.5, textTransform: 'uppercase', padding: '6px 12px', borderRadius: 20 
+                      }}>
+                        {cat.isActive ? 'Active' : 'Inactive'}
                       </span>
-                      <button
-                        id={`edit-cat-${cat.id}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingId(cat.id);
-                          setEditForm({ name: cat.name, description: cat.description });
-                          setExpandedId(null);
-                        }}
-                        style={{
-                          background: 'var(--color-surface-2)', border: 'none', borderRadius: 8,
-                          width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          color: 'var(--color-primary)', cursor: 'pointer',
-                        }}
-                      >
-                        <Edit2 size={16} />
-                      </button>
-                      <button
-                        id={`toggle-cat-${cat.id}`}
-                        onClick={(e) => { e.stopPropagation(); handleToggleActive(cat); }}
-                        style={{
-                          background: '#dcfce7', border: 'none', borderRadius: 8,
-                          width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          color: '#166534', cursor: 'pointer',
-                        }}
-                        title="Deactivate category"
-                      >
-                        <Power size={16} />
-                      </button>
-                      {isExpanded ? <ChevronUp size={16} color="var(--color-text-muted)" /> : <ChevronDown size={16} color="var(--color-text-muted)" />}
-                    </div>
-                  </div>
-                  {isExpanded && (
-                    <div style={{
-                      padding: '0 24px 20px 84px',
-                      fontSize: 14, lineHeight: 1.6, color: 'var(--color-text-muted)',
-                      borderTop: '1px solid var(--color-border)',
-                      paddingTop: 16, marginTop: -8,
-                    }}>
-                      {cat.description}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          );
-        })}
+                    </td>
+                    <td style={{ padding: '16px 24px', textAlign: 'right' }}>
+                      {isEditing ? (
+                        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                          <button onClick={() => setEditingId(null)} className="btn btn-ghost" style={{ padding: '6px 10px', borderRadius: 8, fontSize: 13 }}>
+                            Cancel
+                          </button>
+                          <button onClick={() => handleUpdate(cat.id)} disabled={saving} className="btn btn-primary" style={{ padding: '6px 10px', borderRadius: 8, fontSize: 13 }}>
+                            Save
+                          </button>
+                        </div>
+                      ) : (
+                        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                          <button
+                            id={`edit-cat-${cat.id}`}
+                            onClick={() => { setEditingId(cat.id); setEditForm({ name: cat.name, description: cat.description }); }}
+                            style={{ padding: '8px', color: 'var(--color-text-muted)', borderRadius: '8px', border: 'none', background: 'transparent', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                            onMouseOver={(e) => { e.currentTarget.style.background = 'var(--color-surface-2)'; e.currentTarget.style.color = 'var(--color-primary)'; }}
+                            onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--color-text-muted)'; }}
+                          >
+                            <Edit2 size={16} />
+                          </button>
+                          <button
+                            id={`toggle-cat-${cat.id}`}
+                            onClick={() => handleToggleActive(cat)}
+                            title={cat.isActive ? "Deactivate category" : "Reactivate category"}
+                            style={{ padding: '8px', color: 'var(--color-text-muted)', borderRadius: '8px', border: 'none', background: 'transparent', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                            onMouseOver={(e) => { e.currentTarget.style.background = cat.isActive ? 'rgba(239, 68, 68, 0.1)' : '#dcfce7'; e.currentTarget.style.color = cat.isActive ? '#ef4444' : '#166534'; }}
+                            onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--color-text-muted)'; }}
+                          >
+                            {cat.isActive ? <PowerOff size={16} /> : <Power size={16} />}
+                          </button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
       </div>
-
-      {/* Inactive categories */}
-      {inactive.length > 0 && (
-        <div style={{ marginTop: 40 }}>
-          <h2 style={{ fontSize: 16, fontWeight: 600, color: 'var(--color-text-muted)', marginBottom: 12 }}>
-            Inactive Categories ({inactive.length})
-          </h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {inactive.map((cat) => (
-              <div
-                key={cat.id}
-                style={{
-                  background: 'white', borderRadius: 16, border: '1px dashed var(--color-border)',
-                  padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 14, opacity: 0.7,
-                }}
-              >
-                <Tag size={18} color="var(--color-text-muted)" />
-                <div style={{ flex: 1 }}>
-                  <span style={{ fontWeight: 600, fontSize: 15, color: 'var(--color-text-muted)', textDecoration: 'line-through' }}>{cat.name}</span>
-                </div>
-                <button
-                  id={`reactivate-cat-${cat.id}`}
-                  onClick={() => handleToggleActive(cat)}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 600,
-                    padding: '6px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
-                    background: '#dcfce7', color: '#166534',
-                  }}
-                >
-                  <Power size={14} /> Re-activate
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
