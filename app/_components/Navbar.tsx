@@ -1,40 +1,71 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
+import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
+import { Phone } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Navbar() {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const { scrollY } = useScroll();
+  const [hidden, setHidden] = useState(false);
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = scrollY.getPrevious() || 0;
+    if (latest > previous && latest > 150) {
+      setHidden(true);
+    } else {
+      setHidden(false);
+    }
+  });
 
   return (
-    <nav style={{
-      position: 'sticky', top: 0, zIndex: 50,
-      background: 'rgba(255,255,255,0.95)',
-      backdropFilter: 'blur(16px)',
-      borderBottom: '1px solid var(--color-border)',
-      boxShadow: '0 1px 12px rgba(30,73,106,0.05)',
-      height: '80px',
+    <div style={{
+      position: 'fixed',
+      top: '24px',
+      left: 0,
+      right: 0,
       display: 'flex',
-      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 100,
+      padding: '0 24px',
     }}>
-      <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-        {/* Logo */}
-        <Link href="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+      <motion.nav 
+        variants={{
+          visible: { y: 0, opacity: 1, transition: { duration: 0.4, ease: "easeOut" } },
+          hidden: { y: "-150%", opacity: 0, transition: { duration: 0.4, ease: "easeIn" } }
+        }}
+        initial="visible"
+        animate={hidden ? "hidden" : "visible"}
+        style={{
+          background: 'var(--color-primary)', /* Deep navy blue as per logo */
+          borderRadius: '9999px',
+          padding: '8px 8px 8px 20px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '24px',
+          boxShadow: '0 8px 32px rgba(30,73,106,0.3)',
+          border: '1px solid rgba(255,255,255,0.1)',
+        }}
+      >
+        <Link href="/" style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+        }}>
           <img 
-            src="/images/logo.jpg" 
-            alt="Solitaire Human Resources Consultancy L.L.C" 
-            style={{ height: '48px', objectFit: 'contain' }} 
+            src="/images/logo.png" 
+            alt="Solitaire" 
+            style={{ height: '40px', objectFit: 'contain', borderRadius: '4px' }} 
           />
         </Link>
 
         {/* Desktop Nav */}
-        <div style={{ alignItems: 'center', gap: '32px' }} className="hidden md:flex">
-          <Link href="/" style={{ color: 'var(--color-primary)', fontWeight: 600, fontSize: '14px', borderBottom: '2px solid var(--color-primary)', paddingBottom: '4px' }}>Home</Link>
-          <Link href="#about" style={{ color: 'var(--color-text)', fontWeight: 500, fontSize: '14px' }}>About Us</Link>
-          <Link href="#services" style={{ color: 'var(--color-text)', fontWeight: 500, fontSize: '14px' }}>Our Services</Link>
-          <Link href="#why-us" style={{ color: 'var(--color-text)', fontWeight: 500, fontSize: '14px' }}>Why Us</Link>
-          <Link href="#contact" style={{ color: 'var(--color-text)', fontWeight: 500, fontSize: '14px' }}>Contact Us</Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }} className="hidden md:flex">
+          <Link href="/" style={{ color: 'white', fontWeight: 500, fontSize: '14px', transition: 'color 0.2s' }}>Home</Link>
+          <Link href="/jobs" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500, fontSize: '14px', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = 'white'} onMouseOut={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}>Jobs</Link>
+          <Link href="/#about" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500, fontSize: '14px', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = 'white'} onMouseOut={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}>About Us</Link>
+          <Link href="/#services" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500, fontSize: '14px', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = 'white'} onMouseOut={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}>Our Services</Link>
+          <Link href="/#why-us" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500, fontSize: '14px', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = 'white'} onMouseOut={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}>Why Us</Link>
+          <Link href="/#contact" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500, fontSize: '14px', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = 'white'} onMouseOut={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}>Contact Us</Link>
         </div>
 
         {/* Phone Action */}
@@ -42,14 +73,14 @@ export default function Navbar() {
           <a href="tel:+971506486332" style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '12px',
-            border: '1px solid var(--color-border)',
+            gap: '6px',
+            background: 'white',
+            color: 'var(--color-primary-dark)',
+            padding: '6px 20px 6px 6px',
             borderRadius: '9999px',
-            padding: '6px 16px 6px 6px',
-            textDecoration: 'none',
-            color: 'var(--color-text)',
             fontWeight: 600,
-            fontSize: '15px'
+            fontSize: '14px',
+            textDecoration: 'none',
           }}>
             <div style={{
               width: '32px',
@@ -61,23 +92,12 @@ export default function Navbar() {
               justifyContent: 'center',
               color: 'white'
             }}>
-              <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-              </svg>
+              <Phone size={16} />
             </div>
             +971 50 648 6332
           </a>
         </div>
-
-        {/* Mobile toggle (visual only — full mobile menu below) */}
-        <button
-          id="nav-mobile-toggle"
-          className="btn btn-ghost btn-sm md:hidden"
-          onClick={() => setMenuOpen(!menuOpen)}
-          style={{ display: 'none' }}
-          aria-label="Toggle menu"
-        >☰</button>
-      </div>
-    </nav>
+      </motion.nav>
+    </div>
   );
 }

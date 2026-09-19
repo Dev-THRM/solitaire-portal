@@ -21,7 +21,7 @@ export default function Footer() {
           {/* Brand & Address */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '40px', flexWrap: 'wrap' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <img src="/images/logo.jpg" alt="Solitaire" style={{ height: '48px' }} />
+              <img src="/images/logo.svg" alt="Solitaire" style={{ height: '48px', objectFit: 'contain' }} />
             </div>
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-text-muted)', fontSize: '14px' }}>

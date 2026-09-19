@@ -42,18 +42,21 @@ export default async function ApplyPage({ params }: PageProps) {
         </nav>
 
         {/* Job summary */}
-        <div style={{
-          background: 'var(--gradient-hero)',
-          borderRadius: 'var(--radius-xl)',
-          padding: '24px 28px',
-          marginBottom: 32,
-          color: 'white',
-        }}>
-          <h1 style={{ fontSize: 22, color: 'white', marginBottom: 6 }}>Apply for {job.title}</h1>
-          <p style={{ opacity: 0.85, fontSize: 15 }}>
-            {job.company} · {job.location}
-            {job.salary && ` · ${job.salary}`}
-          </p>
+        <div style={{ marginBottom: 10, borderBottom: '1px solid var(--color-border)', paddingBottom: 24 }}>
+          <h1 style={{ fontSize: 32, fontWeight: 800, color: 'var(--color-text)', marginBottom: 8, marginTop: 50, letterSpacing: '-0.02em' }}>
+            Apply for {job.title}
+          </h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: 'var(--color-text-muted)', fontSize: 15, fontWeight: 500 }}>
+            <span>{job.company || 'Solitaire Human Resources'}</span>
+            <span style={{ color: 'var(--color-border)' }}>|</span>
+            <span>{job.location}</span>
+            {job.salary && (
+              <>
+                <span style={{ color: 'var(--color-border)' }}>|</span>
+                <span>{job.salary}</span>
+              </>
+            )}
+          </div>
         </div>
 
         {/* Application form */}

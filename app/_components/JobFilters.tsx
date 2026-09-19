@@ -88,7 +88,7 @@ export default function JobFilters() {
             className="btn btn-sm"
             style={{
               background: currentType === t.value
-                ? 'var(--gradient-hero)'
+                ? 'var(--color-primary)'
                 : 'var(--color-surface-3)',
               color: currentType === t.value ? 'white' : 'var(--color-text-muted)',
               boxShadow: currentType === t.value ? '0 2px 8px rgba(99,102,241,0.3)' : 'none',
