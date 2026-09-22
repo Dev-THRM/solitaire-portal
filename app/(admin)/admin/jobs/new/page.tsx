@@ -45,7 +45,7 @@ export default function NewJobPage() {
   }
 
   return (
-    <div style={{ maxWidth: 860 }}>
+    <div style={{ width: '100%', maxWidth: 1200 }}>
       <div style={{ marginBottom: 32 }}>
         <Link href="/admin/jobs" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 14, fontWeight: 500, color: 'var(--color-primary)', textDecoration: 'none', marginBottom: 12 }}>
           <ArrowLeft size={16} /> Back to Jobs

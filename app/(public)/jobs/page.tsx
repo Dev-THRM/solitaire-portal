@@ -4,7 +4,7 @@ import { getJobs } from '../../_lib/api';
 import JobCard from '../../_components/JobCard';
 import JobFilters from '../../_components/JobFilters';
 import Link from 'next/link';
-import { Search, AlertCircle } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Careers',
@@ -46,7 +46,6 @@ async function JobList({ params }: { params: Record<string, string> }) {
         borderRadius: 24,
         border: '1px dashed var(--color-border)',
       }}>
-        <Search size={48} color="var(--color-text-muted)" opacity={0.3} style={{ marginBottom: 16 }} />
         <h3 style={{ fontSize: 20, color: 'var(--color-text)' }}>No roles found</h3>
         <p style={{ color: 'var(--color-text-muted)', marginTop: 8 }}>
           We couldn't find any roles matching your criteria. Try adjusting your filters.

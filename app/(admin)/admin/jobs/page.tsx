@@ -110,7 +110,7 @@ export default function AdminJobsPage() {
                      <MapPin size={13} /> {job.location}
                    </span>
                    <span style={{ fontSize: 12, color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                     <DollarSign size={13} /> ₹{job.salaryMin?.toLocaleString('en-IN')} - ₹{job.salaryMax?.toLocaleString('en-IN')}
+                     <DollarSign size={13} /> {job.salaryMin != null && job.salaryMax != null ? `₹${job.salaryMin.toLocaleString('en-IN')} - ₹${job.salaryMax.toLocaleString('en-IN')}` : 'Not set'}
                    </span>
                    <span style={{ fontSize: 12, color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: 6 }}>
                      <Users size={13} /> {job._count?.applications ?? 0} Apps

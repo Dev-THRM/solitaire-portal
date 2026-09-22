@@ -57,7 +57,7 @@ export default function AdminDashboard() {
             Welcome back, {admin?.name?.split(' ')[0] ?? 'Admin'}
           </h1>
           <p style={{ color: 'var(--color-text-muted)', fontSize: 16 }}>
-            Here's what's happening with your job portal today.
+            Here's what's happening with solitaire job portal today.
           </p>
         </div>
         <div style={{ display: 'flex', gap: 16 }}>
@@ -73,7 +73,7 @@ export default function AdminDashboard() {
           <div key={stat.label} className="bento-col-3" style={{
             background: 'white',
             borderRadius: 24,
-            padding: 28,
+            padding: 20,
             boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
             display: 'flex',
             alignItems: 'center',
@@ -86,24 +86,24 @@ export default function AdminDashboard() {
           onMouseOut={(e) => e.currentTarget.style.transform = 'none'}
           >
             <div>
-              <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--color-text-muted)', marginBottom: 8 }}>{stat.label}</p>
+              <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--color-text-muted)', marginBottom: 6 }}>{stat.label}</p>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
-                <p style={{ fontSize: 40, fontWeight: 800, fontFamily: 'var(--font-display)', color: 'var(--color-text)', lineHeight: 1 }}>
+                <p style={{ fontSize: 32, fontWeight: 800, fontFamily: 'var(--font-display)', color: 'var(--color-text)', lineHeight: 1 }}>
                   {stat.value}
                 </p>
               </div>
-              <p style={{ fontSize: 13, fontWeight: 500, color: stat.color, marginTop: 12, background: `${stat.color}15`, display: 'inline-block', padding: '4px 10px', borderRadius: 12 }}>
+              <p style={{ fontSize: 12, fontWeight: 500, color: stat.color, marginTop: 8, background: `${stat.color}15`, display: 'inline-block', padding: '4px 8px', borderRadius: 12 }}>
                 {stat.sub}
               </p>
             </div>
             <div style={{
-              width: 64, height: 64,
-              borderRadius: 16,
+              width: 48, height: 48,
+              borderRadius: 14,
               background: `${stat.color}10`,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               color: stat.color
             }}>
-              <stat.icon size={32} strokeWidth={1.5} />
+              <stat.icon size={24} strokeWidth={1.5} />
             </div>
           </div>
         ))}

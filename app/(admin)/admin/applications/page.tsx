@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, Suspense } from 'react';
+import { useEffect, useState, useCallback, Suspense, Fragment } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   adminGetApplications,
@@ -20,7 +20,7 @@ import { getToken } from '@/app/_lib/auth';
 import {
   Mail, Phone, FileText, CheckCircle2, Clock, Eye, XCircle, Search,
   User, Folder, ArrowRightLeft, PauseCircle, RefreshCw, Sparkles,
-  Plus, Trash2, AlertCircle, ChevronRight, Brain,
+  Plus, Trash2, AlertCircle, ChevronRight, Brain, ChevronDown,
 } from 'lucide-react';
 
 const STATUS_CONFIG: Record<string, any> = {
@@ -494,7 +494,7 @@ function ApplicationsPageContent() {
         })}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: selected ? '1fr 420px' : '1fr', gap: 24, alignItems: 'start' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 24, alignItems: 'start' }}>
         {/* Applications List */}
         <div style={{ background: 'white', borderRadius: 24, border: '1px solid var(--color-border)', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
           {filtered.length === 0 ? (
@@ -519,40 +519,139 @@ function ApplicationsPageContent() {
                     const cfg = STATUS_CONFIG[app.status];
                     const isSelected = selected?.id === app.id;
                     return (
-                      <tr
-                        key={app.id}
-                        onClick={() => setSelected(isSelected ? null : app)}
-                        style={{
-                          background: isSelected ? 'var(--color-primary-light)' : 'white',
-                          borderBottom: '1px solid var(--color-border)',
-                          cursor: 'pointer',
-                          transition: 'background 0.2s',
-                        }}
-                        onMouseOver={(e) => { if (!isSelected) e.currentTarget.style.background = 'var(--color-surface-2)'; }}
-                        onMouseOut={(e) => { if (!isSelected) e.currentTarget.style.background = 'white'; }}
-                      >
-                        <td style={{ padding: '16px 24px' }}>
-                          <div style={{ fontWeight: 600, color: 'var(--color-text)', marginBottom: 4 }}>{app.firstName} {app.lastName}</div>
-                          <div style={{ fontSize: 13, color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                            <Mail size={12} /> {app.email}
-                          </div>
-                        </td>
-                        <td style={{ padding: '16px 24px', fontSize: 14, color: 'var(--color-text)' }}>
-                          {app.job?.title ?? '—'}
-                        </td>
-                        <td style={{ padding: '16px 24px' }}>
-                          <span style={{
-                            display: 'inline-flex', alignItems: 'center', gap: 6,
-                            padding: '4px 10px', borderRadius: 12, fontSize: 12, fontWeight: 600,
-                            background: cfg.bg, color: cfg.color,
-                          }}>
-                            <cfg.icon size={14} /> {cfg.label}
-                          </span>
-                        </td>
-                        <td style={{ padding: '16px 24px', fontSize: 13, color: 'var(--color-text-subtle)' }}>
-                          {new Date(app.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                        </td>
-                      </tr>
+                      <Fragment key={app.id}>
+                        <tr
+                          onClick={() => setSelected(isSelected ? null : app)}
+                          style={{
+                            background: isSelected ? 'var(--color-primary-light)' : 'white',
+                            borderBottom: isSelected ? 'none' : '1px solid var(--color-border)',
+                            cursor: 'pointer',
+                            transition: 'background 0.2s',
+                          }}
+                          onMouseOver={(e) => { if (!isSelected) e.currentTarget.style.background = 'var(--color-surface-2)'; }}
+                          onMouseOut={(e) => { if (!isSelected) e.currentTarget.style.background = 'white'; }}
+                        >
+                          <td style={{ padding: '16px 24px' }}>
+                            <div style={{ fontWeight: 600, color: 'var(--color-text)', marginBottom: 4 }}>{app.firstName} {app.lastName}</div>
+                            <div style={{ fontSize: 13, color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                              <Mail size={12} /> {app.email}
+                            </div>
+                          </td>
+                          <td style={{ padding: '16px 24px', fontSize: 14, color: 'var(--color-text)' }}>
+                            {app.job?.title ?? '—'}
+                          </td>
+                          <td style={{ padding: '16px 24px' }}>
+                            <span style={{
+                              display: 'inline-flex', alignItems: 'center', gap: 6,
+                              padding: '4px 10px', borderRadius: 12, fontSize: 12, fontWeight: 600,
+                              background: cfg.bg, color: cfg.color,
+                            }}>
+                              <cfg.icon size={14} /> {cfg.label}
+                            </span>
+                          </td>
+                          <td style={{ padding: '16px 24px', fontSize: 13, color: 'var(--color-text-subtle)' }}>
+                            {new Date(app.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          </td>
+                        </tr>
+                        {isSelected && (
+                          <tr style={{ background: 'var(--color-primary-light)', borderBottom: '1px solid var(--color-border)' }}>
+                            <td colSpan={4} style={{ padding: '0 24px 24px 24px' }}>
+                              <div style={{
+                                background: 'white', borderRadius: 20, padding: 24,
+                                boxShadow: '0 4px 20px rgba(0,0,0,0.05)', border: '1px solid var(--color-border)',
+                              }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
+                                  <div>
+                                    <h3 style={{ fontSize: 20, fontWeight: 700, color: 'var(--color-text)' }}>{app.firstName} {app.lastName}</h3>
+                                    <p style={{ color: 'var(--color-primary)', fontWeight: 500, marginTop: 4, fontSize: 13 }}>
+                                      Applied for: {app.job?.title}
+                                    </p>
+                                  </div>
+                                </div>
+
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
+                                  <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                                    {/* Contact Info */}
+                                    <div style={{ background: 'var(--color-surface-2)', padding: 12, borderRadius: 14, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, color: 'var(--color-text)' }}>
+                                        <div style={{ width: 28, height: 28, borderRadius: 8, background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-muted)' }}><Mail size={14} /></div>
+                                        <a href={`mailto:${app.email}`} style={{ color: 'var(--color-primary)', fontWeight: 500, textDecoration: 'none' }}>{app.email}</a>
+                                      </div>
+                                      {app.phone && (
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, color: 'var(--color-text)' }}>
+                                          <div style={{ width: 28, height: 28, borderRadius: 8, background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-muted)' }}><Phone size={14} /></div>
+                                          {app.phone}
+                                        </div>
+                                      )}
+                                    </div>
+
+                                    {/* Update Status */}
+                                    <div style={{ background: 'var(--color-surface-2)', padding: 16, borderRadius: 14 }}>
+                                      <h4 style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text)', marginBottom: 8 }}>Application Status</h4>
+                                      <div style={{ position: 'relative' }}>
+                                        <select
+                                          id={`status-select-${app.id}`}
+                                          value={app.status}
+                                          onChange={(e) => updateStatus(app.id, e.target.value)}
+                                          disabled={updatingStatus}
+                                          style={{
+                                            width: '100%',
+                                            padding: '10px 14px',
+                                            borderRadius: 12,
+                                            border: `1px solid ${STATUS_CONFIG[app.status]?.color || 'var(--color-border)'}`,
+                                            fontSize: 14,
+                                            fontWeight: 600,
+                                            color: STATUS_CONFIG[app.status]?.color || 'var(--color-text)',
+                                            backgroundColor: STATUS_CONFIG[app.status]?.bg || 'white',
+                                            appearance: 'none',
+                                            cursor: updatingStatus ? 'wait' : 'pointer',
+                                            outline: 'none',
+                                            transition: 'all 0.2s',
+                                          }}
+                                        >
+                                          {Object.entries(STATUS_CONFIG).map(([val, cfg]) => (
+                                            <option key={val} value={val} style={{ color: 'var(--color-text)', background: 'white' }}>
+                                              {cfg.label}
+                                            </option>
+                                          ))}
+                                        </select>
+                                        <div style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: STATUS_CONFIG[app.status]?.color || 'var(--color-text-muted)' }}>
+                                          <ChevronDown size={16} />
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    {/* Cover Letter */}
+                                    <div>
+                                      <h4 style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text)', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
+                                        <FileText size={15} color="var(--color-primary)" /> Cover Letter
+                                      </h4>
+                                      <div style={{
+                                        background: 'white', border: '1px solid var(--color-border)', padding: 12, borderRadius: 14,
+                                        fontSize: 13, lineHeight: 1.5, color: 'var(--color-text-muted)', whiteSpace: 'pre-wrap', maxHeight: 120, overflowY: 'auto',
+                                      }}>
+                                        {app.coverLetter || <em>No cover letter provided</em>}
+                                      </div>
+                                    </div>
+
+                                    {/* Resume */}
+                                    {app.resumeUrl && (
+                                      <a href={app.resumeUrl} target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', padding: 10, fontSize: 13 }}>
+                                        <FileText size={15} /> View Resume Document
+                                      </a>
+                                    )}
+                                  </div>
+
+                                  <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                                    {/* Categorization panel */}
+                                    <CategoriesPanel app={app} />
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </Fragment>
                     );
                   })}
                 </tbody>
@@ -560,102 +659,6 @@ function ApplicationsPageContent() {
             </div>
           )}
         </div>
-
-        {/* Detail Panel */}
-        {selected && (
-          <div style={{
-            background: 'white', borderRadius: 24, padding: 28, position: 'sticky', top: 32,
-            boxShadow: '0 8px 32px rgba(0,0,0,0.08)', border: '1px solid var(--color-border)',
-            maxHeight: 'calc(100vh - 80px)', overflowY: 'auto',
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
-              <div>
-                <h3 style={{ fontSize: 22, fontWeight: 700, color: 'var(--color-text)' }}>{selected.firstName} {selected.lastName}</h3>
-                <p style={{ color: 'var(--color-primary)', fontWeight: 500, marginTop: 4, fontSize: 14 }}>
-                  Applied for: {selected.job?.title}
-                </p>
-              </div>
-              <button
-                onClick={() => setSelected(null)}
-                style={{ background: 'var(--color-surface-2)', border: 'none', borderRadius: '50%', width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--color-text-muted)' }}
-              >
-                <XCircle size={20} />
-              </button>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              {/* Contact Info */}
-              <div style={{ background: 'var(--color-surface-2)', padding: 16, borderRadius: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, color: 'var(--color-text)' }}>
-                  <div style={{ width: 30, height: 30, borderRadius: 8, background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-muted)' }}><Mail size={15} /></div>
-                  <a href={`mailto:${selected.email}`} style={{ color: 'var(--color-primary)', fontWeight: 500, textDecoration: 'none' }}>{selected.email}</a>
-                </div>
-                {selected.phone && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, color: 'var(--color-text)' }}>
-                    <div style={{ width: 30, height: 30, borderRadius: 8, background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-muted)' }}><Phone size={15} /></div>
-                    {selected.phone}
-                  </div>
-                )}
-              </div>
-
-              {/* Cover Letter */}
-              <div>
-                <h4 style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-text)', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <FileText size={16} color="var(--color-primary)" /> Cover Letter
-                </h4>
-                <div style={{
-                  background: 'white', border: '1px solid var(--color-border)', padding: 16, borderRadius: 14,
-                  fontSize: 13, lineHeight: 1.6, color: 'var(--color-text-muted)', whiteSpace: 'pre-wrap', maxHeight: 180, overflowY: 'auto',
-                }}>
-                  {selected.coverLetter || <em>No cover letter provided</em>}
-                </div>
-              </div>
-
-              {/* Resume */}
-              {selected.resumeUrl && (
-                <a href={selected.resumeUrl} target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', padding: 12, fontSize: 14 }}>
-                  <FileText size={16} /> View Resume Document
-                </a>
-              )}
-
-              <hr style={{ border: 'none', borderTop: '1px solid var(--color-border)', margin: '4px 0' }} />
-
-              {/* Categorization panel */}
-              <CategoriesPanel app={selected} />
-
-              <hr style={{ border: 'none', borderTop: '1px solid var(--color-border)', margin: '4px 0' }} />
-
-              {/* Update Status */}
-              <div>
-                <h4 style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-text)', marginBottom: 12 }}>Application Status</h4>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                  {Object.entries(STATUS_CONFIG).map(([val, cfg]) => {
-                    const isActive = selected.status === val;
-                    return (
-                      <button
-                        key={val}
-                        id={`status-btn-${val.toLowerCase()}-${selected.id}`}
-                        onClick={() => updateStatus(selected.id, val)}
-                        disabled={updatingStatus || isActive}
-                        style={{
-                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                          padding: 10, borderRadius: 10, fontSize: 12, fontWeight: 600, cursor: isActive ? 'default' : 'pointer',
-                          background: isActive ? cfg.bg : 'var(--color-surface-2)',
-                          color: isActive ? cfg.color : 'var(--color-text-muted)',
-                          border: `1px solid ${isActive ? cfg.color : 'transparent'}`,
-                          transition: 'all 0.2s',
-                          opacity: updatingStatus && !isActive ? 0.5 : 1,
-                        }}
-                      >
-                        <cfg.icon size={14} /> {cfg.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Spin animation for the refresh icon */}
