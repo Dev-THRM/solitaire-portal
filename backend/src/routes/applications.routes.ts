@@ -57,6 +57,7 @@ const ApplicationSchema = z.object({
 
 const StatusSchema = z.object({
   status: z.enum(['PENDING', 'REVIEWED', 'CATEGORIZED', 'ACCEPTED', 'SWITCHED', 'ON_HOLD', 'REJECTED']),
+  jobId: z.string().cuid().optional(),
 });
 
 // ── Public routes ─────────────────────────────────────────────────────────────

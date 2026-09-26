@@ -66,8 +66,8 @@ export async function getApplication(req: Request, res: Response): Promise<void>
 // Admin: PATCH /api/admin/applications/:id/status
 export async function updateStatus(req: Request, res: Response): Promise<void> {
   try {
-    const { status } = req.body;
-    const application = await applicationsService.updateApplicationStatus(req.params.id as string, status);
+    const { status, jobId } = req.body;
+    const application = await applicationsService.updateApplicationStatus(req.params.id as string, status, jobId);
     res.json({ success: true, data: application });
   } catch (err) {
     res.status(500).json({ success: false, error: 'Failed to update status' });

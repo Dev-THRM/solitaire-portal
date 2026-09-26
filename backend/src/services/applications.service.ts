@@ -3,8 +3,8 @@ import prisma from '../config/db';
 import { CreateApplicationDto } from '../types';
 import { extractAndCategorize } from './categorization.service';
 // [DISABLED FOR BASIC TESTING]
-// import { sendApplicationEmail, sendConfirmationEmail } from './email.service';
-// import { appendApplicationToSheet } from './sheets.service';
+import { sendApplicationEmail, sendConfirmationEmail, sendStatusUpdateEmail } from './email.service';
+import { appendApplicationToSheet } from './sheets.service';
 
 export async function createApplication(data: CreateApplicationDto) {
   // 1. Verify job exists and is active
@@ -32,44 +32,44 @@ export async function createApplication(data: CreateApplicationDto) {
     );
   }
 
-  // 5. [DISABLED FOR BASIC TESTING] Fire-and-forget: email + Sheets
-  // const appliedAt = new Date().toLocaleString('en-IN', {
-  //   timeZone: 'Asia/Kolkata',
-  //   dateStyle: 'medium',
-  //   timeStyle: 'short',
-  // });
-  //
-  // Promise.allSettled([
-  //   sendApplicationEmail({
-  //     applicantName: `${data.firstName} ${data.lastName}`,
-  //     applicantEmail: data.email,
-  //     applicantPhone: data.phone,
-  //     jobTitle: job.title,
-  //     company: job.company,
-  //     coverLetter: data.coverLetter,
-  //     resumeUrl: data.resumeUrl,
-  //     appliedAt,
-  //   }),
-  //   sendConfirmationEmail(data.email, `${data.firstName} ${data.lastName}`, job.title),
-  //   appendApplicationToSheet({
-  //     applicationId: application.id,
-  //     jobTitle: job.title,
-  //     company: job.company,
-  //     firstName: data.firstName,
-  //     lastName: data.lastName,
-  //     email: data.email,
-  //     phone: data.phone,
-  //     coverLetter: data.coverLetter,
-  //     resumeUrl: data.resumeUrl,
-  //     appliedAt,
-  //   }),
-  // ]).then((results) => {
-  //   results.forEach((r, i) => {
-  //     if (r.status === 'rejected') {
-  //       console.error(`Notification ${i} failed:`, r.reason);
-  //     }
-  //   });
-  // });
+  // 5. Fire-and-forget: email + Sheets
+  const appliedAt = new Date().toLocaleString('en-IN', {
+    timeZone: 'Asia/Kolkata',
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  });
+
+  Promise.allSettled([
+    sendApplicationEmail({
+      applicantName: `${data.firstName} ${data.lastName}`,
+      applicantEmail: data.email,
+      applicantPhone: data.phone,
+      jobTitle: job.title,
+      company: job.company,
+      coverLetter: data.coverLetter,
+      resumeUrl: data.resumeUrl,
+      appliedAt,
+    }),
+    sendConfirmationEmail(data.email, `${data.firstName} ${data.lastName}`, job.title),
+    appendApplicationToSheet({
+      applicationId: application.id,
+      jobTitle: job.title,
+      company: job.company,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      phone: data.phone,
+      coverLetter: data.coverLetter,
+      resumeUrl: data.resumeUrl,
+      appliedAt,
+    }),
+  ]).then((results) => {
+    results.forEach((r, i) => {
+      if (r.status === 'rejected') {
+        console.error(`Notification ${i} failed:`, r.reason);
+      }
+    });
+  });
 
   return application;
 }
@@ -91,9 +91,21 @@ export async function getApplicationById(id: string) {
   });
 }
 
-export async function updateApplicationStatus(id: string, status: string) {
-  return prisma.application.update({
+export async function updateApplicationStatus(id: string, status: string, jobId?: string) {
+  const data: any = { status: status as any };
+  if (jobId) {
+    data.jobId = jobId;
+  }
+  const app = await prisma.application.update({
     where: { id },
-    data: { status: status as any },
+    data,
+    include: { job: true },
   });
+
+  if (['ACCEPTED', 'REJECTED', 'SWITCHED'].includes(status)) {
+    sendStatusUpdateEmail(app.email, `${app.firstName} ${app.lastName}`, app.job.title, status)
+      .catch((err) => console.error('[email] Failed to send status update email:', err));
+  }
+
+  return app;
 }
