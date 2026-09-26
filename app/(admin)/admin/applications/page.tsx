@@ -11,6 +11,8 @@ import {
   adminRemoveCategory,
   adminGetAlternateSuggestions,
   adminGetCategories,
+  adminGetJobs,
+  type Job,
   type Application,
   type CandidateCategory,
   type ResumeStatus,
@@ -70,7 +72,7 @@ function CategorizationStatusBadge({ status }: { status: string }) {
 }
 
 // ── Categories panel (shown in the detail sidebar) ───────────────────────────
-function CategoriesPanel({ app }: { app: Application }) {
+function CategoriesPanel({ app, onAppUpdate }: { app: Application; onAppUpdate?: (app: Application) => void }) {
   const [resumeStatus, setResumeStatus] = useState<ResumeStatus>(null);
   const [categories, setCategories] = useState<CandidateCategory[]>([]);
   const [allCategories, setAllCategories] = useState<Category[]>([]);
@@ -95,6 +97,11 @@ function CategoriesPanel({ app }: { app: Application }) {
       setResumeStatus(rsRes.data);
       setCategories(catRes.data);
       setAllCategories(allCatRes.data.filter((c) => c.isActive));
+
+      // If backend categorization is DONE but local app state is still PENDING
+      if (rsRes.data?.categorizationStatus === 'DONE' && app.status === 'PENDING') {
+        if (onAppUpdate) onAppUpdate({ ...app, status: 'CATEGORIZED' });
+      }
 
       // Load alternates if rejected
       if (app.status === 'REJECTED') {
@@ -192,24 +199,24 @@ function CategoriesPanel({ app }: { app: Application }) {
         <button
           id={`trigger-categorize-${app.id}`}
           onClick={handleTrigger}
-          disabled={triggering || isProcessing || !resumeStatus}
+          disabled={triggering || isProcessing || !resumeStatus || ['ACCEPTED', 'REJECTED'].includes(app.status)}
           style={{
             display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px',
-            borderRadius: 10, border: 'none', cursor: canCategorize ? 'pointer' : 'not-allowed',
+            borderRadius: 10, border: 'none', cursor: canCategorize && !['ACCEPTED', 'REJECTED'].includes(app.status) ? 'pointer' : 'not-allowed',
             background: hasFailed
               ? '#fee2e2'
-              : canCategorize
+              : canCategorize && !['ACCEPTED', 'REJECTED'].includes(app.status)
                 ? 'var(--color-primary)'
                 : 'var(--color-surface-2)',
             color: hasFailed
               ? '#dc2626'
-              : canCategorize
+              : canCategorize && !['ACCEPTED', 'REJECTED'].includes(app.status)
                 ? 'white'
                 : 'var(--color-text-muted)',
             fontSize: 13, fontWeight: 600, transition: 'all 0.2s',
-            opacity: triggering ? 0.6 : 1,
+            opacity: triggering || ['ACCEPTED', 'REJECTED'].includes(app.status) ? 0.6 : 1,
           }}
-          title={!resumeStatus ? 'No resume extracted yet' : catStatus === 'PROCESSING' ? 'Processing…' : hasFailed ? 'Retry extraction & categorization' : 'Re-run categorization'}
+          title={['ACCEPTED', 'REJECTED'].includes(app.status) ? 'Cannot re-run for finalized applications' : !resumeStatus ? 'No resume extracted yet' : catStatus === 'PROCESSING' ? 'Processing…' : hasFailed ? 'Retry extraction & categorization' : 'Re-run categorization'}
         >
           <RefreshCw size={14} style={{ animation: isProcessing ? 'spin 1s linear infinite' : 'none' }} />
           {hasFailed ? 'Retry' : catStatus === 'DONE' ? 'Re-run' : 'Categorize'}
@@ -408,6 +415,10 @@ function ApplicationsPageContent() {
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [statusFilter, setStatusFilter] = useState('ALL');
 
+  const [showSwitchModal, setShowSwitchModal] = useState<string | null>(null);
+  const [activeJobs, setActiveJobs] = useState<Job[]>([]);
+  const [selectedJobId, setSelectedJobId] = useState<string>('');
+
   useEffect(() => {
     const token = getToken();
     if (!token) { router.push('/login'); return; }
@@ -418,20 +429,48 @@ function ApplicationsPageContent() {
       .finally(() => setLoading(false));
   }, [jobId, router]);
 
-  async function updateStatus(appId: string, status: string) {
+  function handleAppUpdate(updatedApp: Application) {
+    setApplications((prev) => prev.map((a) => (a.id === updatedApp.id ? updatedApp : a)));
+    setSelected((prev) => (prev?.id === updatedApp.id ? updatedApp : prev));
+  }
+
+  async function handleStatusClick(appId: string, status: string) {
+    if (status === 'SWITCHED') {
+      setShowSwitchModal(appId);
+      if (activeJobs.length === 0) {
+        adminGetJobs(getToken()!).then(res => setActiveJobs(res.data.filter(j => j.isActive)));
+      }
+      return;
+    }
+    await updateStatus(appId, status);
+  }
+
+  async function updateStatus(appId: string, status: string, targetJobId?: string) {
     const token = getToken()!;
     setUpdatingStatus(true);
     try {
       const res = await fetch(`${API_BASE}/api/apply/admin/${appId}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ status }),
+        body: JSON.stringify({ status, jobId: targetJobId }),
       });
       if (res.ok) {
         setApplications((prev) => prev.map((a) => a.id === appId ? { ...a, status: status as Application['status'] } : a));
         setSelected((prev) => prev?.id === appId ? { ...prev, status: status as Application['status'] } : prev);
+        
+        if (targetJobId && jobId) {
+          setApplications(prev => prev.filter(a => a.id !== appId));
+          if (selected?.id === appId) setSelected(null);
+        } else if (targetJobId) {
+          // If viewing all, just reload to get the new job title
+          adminGetApplications(token).then((res) => setApplications(res.data));
+        }
       }
-    } finally { setUpdatingStatus(false); }
+    } finally { 
+      setUpdatingStatus(false);
+      setShowSwitchModal(null);
+      setSelectedJobId('');
+    }
   }
 
   const filtered = statusFilter === 'ALL' ? applications : applications.filter((a) => a.status === statusFilter);
@@ -587,37 +626,61 @@ function ApplicationsPageContent() {
 
                                     {/* Update Status */}
                                     <div style={{ background: 'var(--color-surface-2)', padding: 16, borderRadius: 14 }}>
-                                      <h4 style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text)', marginBottom: 8 }}>Application Status</h4>
-                                      <div style={{ position: 'relative' }}>
-                                        <select
-                                          id={`status-select-${app.id}`}
-                                          value={app.status}
-                                          onChange={(e) => updateStatus(app.id, e.target.value)}
-                                          disabled={updatingStatus}
-                                          style={{
-                                            width: '100%',
-                                            padding: '10px 14px',
-                                            borderRadius: 12,
-                                            border: `1px solid ${STATUS_CONFIG[app.status]?.color || 'var(--color-border)'}`,
-                                            fontSize: 14,
-                                            fontWeight: 600,
-                                            color: STATUS_CONFIG[app.status]?.color || 'var(--color-text)',
-                                            backgroundColor: STATUS_CONFIG[app.status]?.bg || 'white',
-                                            appearance: 'none',
-                                            cursor: updatingStatus ? 'wait' : 'pointer',
-                                            outline: 'none',
-                                            transition: 'all 0.2s',
-                                          }}
-                                        >
-                                          {Object.entries(STATUS_CONFIG).map(([val, cfg]) => (
-                                            <option key={val} value={val} style={{ color: 'var(--color-text)', background: 'white' }}>
+                                      <h4 style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text)', marginBottom: 12 }}>Update Status</h4>
+                                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                                        {Object.entries(STATUS_CONFIG).map(([val, cfg]) => {
+                                          const isActive = app.status === val;
+                                          
+                                          const isAcceptedOrRejected = ['ACCEPTED', 'REJECTED'].includes(app.status);
+                                          const isSwitchedOrOnHold = ['SWITCHED', 'ON_HOLD'].includes(app.status);
+                                          const isPrevious = ['PENDING', 'REVIEWED', 'CATEGORIZED'].includes(val);
+                                          
+                                          let isDisabled = updatingStatus;
+                                          if (isAcceptedOrRejected && !isActive) {
+                                            isDisabled = true;
+                                          } else if (isSwitchedOrOnHold && isPrevious && !isActive) {
+                                            isDisabled = true;
+                                          }
+                                          
+                                          return (
+                                            <button
+                                              key={val}
+                                              onClick={() => handleStatusClick(app.id, val)}
+                                              disabled={isDisabled}
+                                              style={{
+                                                display: 'flex', alignItems: 'center', gap: 6,
+                                                padding: '8px 12px',
+                                                borderRadius: 10,
+                                                fontSize: 13,
+                                                fontWeight: 600,
+                                                border: `1px solid ${isActive ? cfg.color : 'var(--color-border)'}`,
+                                                background: isActive ? cfg.bg : 'white',
+                                                color: isActive ? cfg.color : 'var(--color-text-muted)',
+                                                cursor: isDisabled ? 'not-allowed' : 'pointer',
+                                                transition: 'all 0.2s',
+                                                opacity: isDisabled && !isActive ? 0.4 : 1,
+                                              }}
+                                              title={isDisabled && !updatingStatus ? "Cannot move backwards from a final state" : undefined}
+                                              onMouseOver={(e) => {
+                                                if (!isActive && !isDisabled) {
+                                                  e.currentTarget.style.borderColor = cfg.color;
+                                                  e.currentTarget.style.color = cfg.color;
+                                                  e.currentTarget.style.background = cfg.bg;
+                                                }
+                                              }}
+                                              onMouseOut={(e) => {
+                                                if (!isActive && !isDisabled) {
+                                                  e.currentTarget.style.borderColor = 'var(--color-border)';
+                                                  e.currentTarget.style.color = 'var(--color-text-muted)';
+                                                  e.currentTarget.style.background = 'white';
+                                                }
+                                              }}
+                                            >
+                                              <cfg.icon size={14} />
                                               {cfg.label}
-                                            </option>
-                                          ))}
-                                        </select>
-                                        <div style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: STATUS_CONFIG[app.status]?.color || 'var(--color-text-muted)' }}>
-                                          <ChevronDown size={16} />
-                                        </div>
+                                            </button>
+                                          );
+                                        })}
                                       </div>
                                     </div>
 
@@ -644,7 +707,7 @@ function ApplicationsPageContent() {
 
                                   <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                                     {/* Categorization panel */}
-                                    <CategoriesPanel app={app} />
+                                    <CategoriesPanel app={app} onAppUpdate={handleAppUpdate} />
                                   </div>
                                 </div>
                               </div>
@@ -660,6 +723,47 @@ function ApplicationsPageContent() {
           )}
         </div>
       </div>
+
+      {showSwitchModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.4)', zIndex: 9999,
+          display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
+          <div style={{ background: 'white', padding: 24, borderRadius: 16, width: 400, maxWidth: '90%', boxShadow: '0 10px 40px rgba(0,0,0,0.1)' }}>
+            <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 8, color: 'var(--color-text)' }}>Switch Role</h3>
+            <p style={{ fontSize: 13, color: 'var(--color-text-muted)', marginBottom: 20, lineHeight: 1.5 }}>
+              Select the new role for this candidate. They will be immediately moved to the new role's candidate list.
+            </p>
+            <select
+              value={selectedJobId}
+              onChange={(e) => setSelectedJobId(e.target.value)}
+              style={{
+                width: '100%', padding: '12px 14px', borderRadius: 10,
+                border: '1px solid var(--color-border)', marginBottom: 24,
+                fontSize: 14, outline: 'none', background: 'var(--color-surface-2)',
+                color: 'var(--color-text)'
+              }}
+            >
+              <option value="">Select a target job...</option>
+              {activeJobs.filter(j => j.id !== (selected?.jobId || applications.find(a => a.id === showSwitchModal)?.jobId)).map(job => (
+                <option key={job.id} value={job.id}>{job.title}</option>
+              ))}
+            </select>
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+              <button onClick={() => setShowSwitchModal(null)} className="btn btn-ghost" style={{ borderRadius: 10, padding: '10px 16px' }}>Cancel</button>
+              <button
+                onClick={() => updateStatus(showSwitchModal, 'SWITCHED', selectedJobId)}
+                disabled={!selectedJobId || updatingStatus}
+                className="btn btn-primary"
+                style={{ borderRadius: 10, padding: '10px 16px', background: '#0ea5e9', color: 'white', border: 'none', opacity: !selectedJobId || updatingStatus ? 0.6 : 1 }}
+              >
+                {updatingStatus ? 'Switching...' : 'Confirm Switch'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Spin animation for the refresh icon */}
       <style>{`
