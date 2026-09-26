@@ -30,7 +30,7 @@ const HEADERS = [
 
 export async function appendApplicationToSheet(data: SheetRowData): Promise<void> {
   if (!SHEET_ID) {
-    console.warn('⚠️  GOOGLE_SHEETS_ID not set — skipping Sheets append');
+    console.warn('[WARN] GOOGLE_SHEETS_ID not set — skipping Sheets append');
     return;
   }
 

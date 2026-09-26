@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { adminCreateJob } from '../../../../_lib/api';
 import { getToken } from '../../../../_lib/auth';
-import { Briefcase, ArrowLeft, Building2, MapPin, DollarSign, FileText, Settings, Rocket, Clock } from 'lucide-react';
+import { Briefcase, ArrowLeft, Building2, MapPin, DollarSign, FileText, Settings, Rocket, Clock, Loader2 } from 'lucide-react';
 
 const JOB_TYPES = ['FULL_TIME', 'PART_TIME', 'REMOTE', 'CONTRACT', 'INTERNSHIP'] as const;
 
@@ -157,7 +157,7 @@ export default function NewJobPage() {
 
         <div style={{ display: 'flex', gap: 16, marginTop: 8 }}>
           <button id="submit-new-job-btn" type="submit" className="btn btn-primary btn-lg" disabled={saving} style={{ padding: '16px 32px', borderRadius: 16, fontSize: 16, flex: 1, justifyContent: 'center' }}>
-            {saving ? '⏳ Saving...' : '🚀 Post Job Now'}
+            {saving ? <><Loader2 className="animate-spin" size={18} style={{ display: 'inline', marginRight: 8 }} /> Saving...</> : <><Rocket size={18} style={{ display: 'inline', marginRight: 8 }} /> Post Job Now</>}
           </button>
           <Link href="/admin/jobs" className="btn btn-outline btn-lg" style={{ padding: '16px 32px', borderRadius: 16, fontSize: 16 }}>
             Cancel

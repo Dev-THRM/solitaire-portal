@@ -15,8 +15,8 @@ export const transporter = nodemailer.createTransport({
 export async function verifyEmailConfig(): Promise<void> {
   try {
     await transporter.verify();
-    console.log('✅ Email transporter ready');
+    console.log('[OK] Email transporter ready');
   } catch (err) {
-    console.warn('⚠️  Email transporter not ready — check SMTP credentials:', err);
+    console.warn('[WARN] Email transporter not ready — check SMTP credentials:', err);
   }
 }

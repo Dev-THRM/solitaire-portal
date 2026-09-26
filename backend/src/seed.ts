@@ -6,7 +6,7 @@ import prisma from './config/db';
 // Run: npm run db:seed
 
 async function seed() {
-  console.log('🌱 Seeding database...');
+  console.log('[SEED] Seeding database...');
 
   // Create default admin
   const hashedPassword = await bcrypt.hash('Admin@123', 12);
@@ -19,10 +19,10 @@ async function seed() {
       name: 'Portal Admin',
     },
   });
-  console.log('✅ Admin created:', admin.email);
+  console.log('[OK] Admin created:', admin.email);
 
   // Removed sample jobs as per request
-  console.log('\n🎉 Seed complete!');
+  console.log('\n[DONE] Seed complete!');
   console.log('   Admin login: admin@jobportal.com / Admin@123');
 }
 

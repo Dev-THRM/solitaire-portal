@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { adminLogin } from '../../_lib/api';
 import { saveSession } from '../../_lib/auth';
 import type { Metadata } from 'next';
+import { Loader2, LogIn } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -115,7 +116,7 @@ export default function LoginPage() {
               disabled={loading}
               style={{ width: '100%', marginTop: 8 }}
             >
-              {loading ? '⏳ Signing in...' : 'Sign In →'}
+              {loading ? <><Loader2 className="animate-spin" size={20} style={{ display: 'inline', marginRight: 8 }} /> Signing in...</> : <><LogIn size={20} style={{ display: 'inline', marginRight: 8 }} /> Sign In</>}
             </button>
           </form>
         </div>

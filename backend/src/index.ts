@@ -69,7 +69,7 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 async function start() {
   // await verifyEmailConfig(); // [DISABLED FOR BASIC TESTING]
   app.listen(PORT, () => {
-    console.log(`🚀 Backend running on http://localhost:${PORT}`);
+    console.log(`[START] Backend running on http://localhost:${PORT}`);
     console.log(`   Environment: ${process.env.NODE_ENV ?? 'development'}`);
   });
 }

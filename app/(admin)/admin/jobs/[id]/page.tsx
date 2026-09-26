@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { adminUpdateJob, type Job } from '@/app/_lib/api';
 import { getToken } from '@/app/_lib/auth';
-import { Briefcase, ArrowLeft, Building2, MapPin, DollarSign, FileText, Settings, Rocket, Clock, Save, Trash2 } from 'lucide-react';
+import { Briefcase, ArrowLeft, Building2, MapPin, DollarSign, FileText, Settings, Rocket, Clock, Save, Trash2, CheckCircle2, Loader2 } from 'lucide-react';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';
 const JOB_TYPES = ['FULL_TIME', 'PART_TIME', 'REMOTE', 'CONTRACT', 'INTERNSHIP'] as const;
@@ -80,7 +80,7 @@ export default function EditJobPage() {
       </div>
 
       {error && <div style={{ background: '#fee2e2', color: '#b91c1c', padding: '16px 20px', borderRadius: 16, fontSize: 14, marginBottom: 24, border: '1px solid #fca5a5', display: 'flex', alignItems: 'center', gap: 12 }}><Settings size={20} /> {error}</div>}
-      {success && <div style={{ background: '#dcfce7', color: '#166534', padding: '16px 20px', borderRadius: 16, fontSize: 14, marginBottom: 24, border: '1px solid #bbf7d0', display: 'flex', alignItems: 'center', gap: 12 }}>✅ Saved successfully! Redirecting...</div>}
+      {success && <div style={{ background: '#dcfce7', color: '#166534', padding: '16px 20px', borderRadius: 16, fontSize: 14, marginBottom: 24, border: '1px solid #bbf7d0', display: 'flex', alignItems: 'center', gap: 12 }}><CheckCircle2 size={20} /> Saved successfully! Redirecting...</div>}
 
       <form id="edit-job-form" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         {/* Basic Info */}
@@ -170,7 +170,7 @@ export default function EditJobPage() {
 
         <div style={{ display: 'flex', gap: 16, marginTop: 8 }}>
           <button id="save-job-btn" type="submit" className="btn btn-primary btn-lg" disabled={saving} style={{ padding: '16px 32px', borderRadius: 16, fontSize: 16, flex: 1, justifyContent: 'center' }}>
-            {saving ? '⏳ Saving...' : <><Save size={20} /> Save Changes</>}
+            {saving ? <><Loader2 className="animate-spin" size={20} style={{ display: 'inline', marginRight: 8 }} /> Saving...</> : <><Save size={20} style={{ display: 'inline', marginRight: 8 }} /> Save Changes</>}
           </button>
           <Link href="/admin/jobs" className="btn btn-outline btn-lg" style={{ padding: '16px 32px', borderRadius: 16, fontSize: 16 }}>
             Cancel

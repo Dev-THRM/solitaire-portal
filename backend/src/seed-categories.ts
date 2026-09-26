@@ -51,7 +51,7 @@ const CATEGORIES = [
 ];
 
 async function main() {
-  console.log('🌱 Seeding categories...');
+  console.log('[SEED] Seeding categories...');
 
   for (const cat of CATEGORIES) {
     await prisma.category.upsert({
@@ -62,7 +62,7 @@ async function main() {
     console.log(`  ✓ ${cat.name}`);
   }
 
-  console.log(`✅ ${CATEGORIES.length} categories seeded.`);
+  console.log(`[OK] ${CATEGORIES.length} categories seeded.`);
 }
 
 main()
