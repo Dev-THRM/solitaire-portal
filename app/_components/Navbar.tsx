@@ -11,7 +11,8 @@ export default function Navbar() {
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious() || 0;
-    if (latest > previous && latest > 150) {
+    // Hide as soon as scrolling down (past a small 20px threshold)
+    if (latest > previous && latest > 20) {
       setHidden(true);
     } else {
       setHidden(false);
