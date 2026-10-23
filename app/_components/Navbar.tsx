@@ -53,9 +53,9 @@ export default function Navbar() {
           alignItems: 'center', 
         }}>
           <img 
-            src="/images/logo.png" 
+            src="/images/logo-white.png" 
             alt="Solitaire" 
-            style={{ height: '40px', objectFit: 'contain', borderRadius: '4px' }} 
+            style={{ height: '48px', objectFit: 'contain' }} 
           />
         </Link>
 
