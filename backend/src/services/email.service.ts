@@ -4,6 +4,9 @@ interface ApplicationEmailData {
   applicantName: string;
   applicantEmail: string;
   applicantPhone?: string;
+  currentCtc?: string;
+  expectedCtc?: string;
+  noticePeriod?: string;
   jobTitle: string;
   company: string;
   coverLetter: string;
@@ -59,6 +62,15 @@ export async function sendApplicationEmail(data: ApplicationEmailData): Promise<
           <div class="field">
             <div class="label">Phone</div>
             <div class="value">${data.applicantPhone}</div>
+          </div>` : ''}
+          ${(data.currentCtc || data.expectedCtc || data.noticePeriod) ? `
+          <div class="field">
+            <div class="label">Compensation & Availability</div>
+            <div class="value">
+              ${data.currentCtc ? `<strong>Current CTC:</strong> ${data.currentCtc}<br>` : ''}
+              ${data.expectedCtc ? `<strong>Expected CTC:</strong> ${data.expectedCtc}<br>` : ''}
+              ${data.noticePeriod ? `<strong>Notice Period:</strong> ${data.noticePeriod}` : ''}
+            </div>
           </div>` : ''}
           <div class="field">
             <div class="label">Position</div>

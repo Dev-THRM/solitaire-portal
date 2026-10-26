@@ -50,7 +50,24 @@ const ApplicationSchema = z.object({
   firstName: z.string().min(1).max(100),
   lastName: z.string().min(1).max(100),
   email: z.string().email(),
-  phone: z.string().optional(),
+  phone: z.string().optional().refine(
+    (val) => {
+      if (!val) return true;
+      const clean = val.replace(/[\s\-\(\)]/g, '');
+      if (clean.startsWith('+91')) {
+        return /^\d{10}$/.test(clean.slice(3));
+      }
+      if (clean.startsWith('+971')) {
+        return /^\d{9}$/.test(clean.slice(4));
+      }
+      const digits = clean.replace(/\D/g, '');
+      return digits.length === 10 || digits.length === 9;
+    },
+    { message: 'Phone must be exactly 10 digits for India or 9 digits for Dubai' }
+  ),
+  currentCtc: z.string().optional(),
+  expectedCtc: z.string().optional(),
+  noticePeriod: z.string().optional(),
   coverLetter: z.string().optional(),
   // resumeUrl is no longer in body; it comes from req.file
 });

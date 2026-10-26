@@ -49,13 +49,16 @@ model Application {
   jobId       String
   job         Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
 
-  firstName   String            @db.VarChar(100)
-  lastName    String            @db.VarChar(100)
-  email       String            @db.VarChar(255)
-  phone       String?           @db.VarChar(20)
-  coverLetter String            @db.Text
-  resumeUrl   String?           @db.VarChar(500)
-  status      ApplicationStatus @default(PENDING)
+  firstName    String            @db.VarChar(100)
+  lastName     String            @db.VarChar(100)
+  email        String            @db.VarChar(255)
+  phone        String?           @db.VarChar(20)
+  currentCtc   String?           @db.VarChar(100)
+  expectedCtc  String?           @db.VarChar(100)
+  noticePeriod String?           @db.VarChar(100)
+  coverLetter  String            @db.Text
+  resumeUrl    String?           @db.VarChar(500)
+  status       ApplicationStatus @default(PENDING)
 
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt

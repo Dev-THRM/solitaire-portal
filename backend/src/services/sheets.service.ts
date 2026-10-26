@@ -8,6 +8,9 @@ interface SheetRowData {
   lastName: string;
   email: string;
   phone?: string;
+  currentCtc?: string;
+  expectedCtc?: string;
+  noticePeriod?: string;
   coverLetter: string;
   resumeUrl?: string;
   appliedAt: string;
@@ -23,6 +26,9 @@ const HEADERS = [
   'Last Name',
   'Email',
   'Phone',
+  'Current CTC',
+  'Expected CTC',
+  'Notice Period',
   'Cover Letter',
   'Resume URL',
   'Applied At',
@@ -54,6 +60,9 @@ export async function appendApplicationToSheet(data: SheetRowData): Promise<void
     data.lastName,
     data.email,
     data.phone ?? '',
+    data.currentCtc ?? '',
+    data.expectedCtc ?? '',
+    data.noticePeriod ?? '',
     data.coverLetter,
     data.resumeUrl ?? '',
     data.appliedAt,

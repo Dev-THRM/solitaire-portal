@@ -26,6 +26,9 @@ export interface CreateApplicationDto {
   lastName: string;
   email: string;
   phone?: string;
+  currentCtc?: string;
+  expectedCtc?: string;
+  noticePeriod?: string;
   coverLetter: string;
   resumeUrl?: string;
 }
