@@ -46,7 +46,7 @@ export default function AdminSidebar() {
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
-          <img src="/images/logo%20short.png" alt="Solitaire Admin" style={{ height: 50, objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
+          <img src="/images/logo.png" alt="Solitaire Admin" style={{ height: 64, objectFit: 'contain' }} />
         </div>
         {admin && (
           <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 12 }}>

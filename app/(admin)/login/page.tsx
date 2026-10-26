@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { adminLogin } from '../../_lib/api';
 import { saveSession } from '../../_lib/auth';
 import type { Metadata } from 'next';
@@ -41,7 +42,14 @@ export default function LoginPage() {
     }}>
       <div style={{ width: '100%', maxWidth: 420 }}>
         {/* Logo */}
-        <div style={{ textAlign: 'center', marginBottom: 40 }}>
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+          <Link href="/" style={{ display: 'inline-block', marginBottom: 16 }}>
+            <img 
+              src="/images/logo.png" 
+              alt="Solitaire" 
+              style={{ height: 60, objectFit: 'contain' }} 
+            />
+          </Link>
           <h1 style={{ fontSize: 26 }}>Admin Login</h1>
           <p style={{ color: 'var(--color-text-muted)', fontSize: 14, marginTop: 6 }}>
             Sign in to manage your job portal

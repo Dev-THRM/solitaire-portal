@@ -38,14 +38,16 @@ export default function Navbar() {
         initial="visible"
         animate={hidden ? "hidden" : "visible"}
         style={{
-          background: 'var(--color-primary)', /* Deep navy blue as per logo */
+          background: 'rgba(255, 255, 255, 0.95)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
           borderRadius: '9999px',
-          padding: '8px 8px 8px 20px',
+          padding: '6px 8px 6px 18px',
           display: 'flex',
           alignItems: 'center',
           gap: '24px',
-          boxShadow: '0 8px 32px rgba(30,73,106,0.3)',
-          border: '1px solid rgba(255,255,255,0.1)',
+          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.08)',
+          border: '1px solid rgba(0, 0, 0, 0.06)',
         }}
       >
         <Link href="/" style={{ 
@@ -53,20 +55,20 @@ export default function Navbar() {
           alignItems: 'center', 
         }}>
           <img 
-            src="/images/logo-white.png" 
+            src="/images/logo.png" 
             alt="Solitaire" 
-            style={{ height: '48px', objectFit: 'contain' }} 
+            style={{ height: '58px', objectFit: 'contain' }} 
           />
         </Link>
 
         {/* Desktop Nav */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }} className="hidden md:flex">
-          <Link href="/" style={{ color: 'white', fontWeight: 500, fontSize: '14px', transition: 'color 0.2s' }}>Home</Link>
-          <Link href="/jobs" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500, fontSize: '14px', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = 'white'} onMouseOut={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}>Jobs</Link>
-          <Link href="/#about" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500, fontSize: '14px', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = 'white'} onMouseOut={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}>About Us</Link>
-          <Link href="/#services" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500, fontSize: '14px', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = 'white'} onMouseOut={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}>Our Services</Link>
-          <Link href="/#why-us" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500, fontSize: '14px', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = 'white'} onMouseOut={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}>Why Us</Link>
-          <Link href="/#contact" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500, fontSize: '14px', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = 'white'} onMouseOut={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}>Contact Us</Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '22px' }} className="hidden md:flex">
+          <Link href="/" style={{ color: 'var(--color-text)', fontWeight: 600, fontSize: '14px', textDecoration: 'none', transition: 'color 0.2s' }}>Home</Link>
+          <Link href="/jobs" style={{ color: 'var(--color-text-muted)', fontWeight: 500, fontSize: '14px', textDecoration: 'none', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = 'var(--color-primary)'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--color-text-muted)'}>Jobs</Link>
+          <Link href="/#about" style={{ color: 'var(--color-text-muted)', fontWeight: 500, fontSize: '14px', textDecoration: 'none', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = 'var(--color-primary)'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--color-text-muted)'}>About Us</Link>
+          <Link href="/#services" style={{ color: 'var(--color-text-muted)', fontWeight: 500, fontSize: '14px', textDecoration: 'none', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = 'var(--color-primary)'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--color-text-muted)'}>Our Services</Link>
+          <Link href="/#why-us" style={{ color: 'var(--color-text-muted)', fontWeight: 500, fontSize: '14px', textDecoration: 'none', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = 'var(--color-primary)'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--color-text-muted)'}>Why Us</Link>
+          <Link href="/#contact" style={{ color: 'var(--color-text-muted)', fontWeight: 500, fontSize: '14px', textDecoration: 'none', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = 'var(--color-primary)'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--color-text-muted)'}>Contact Us</Link>
         </div>
 
         {/* Phone Action */}
@@ -74,26 +76,27 @@ export default function Navbar() {
           <a href="tel:+971506486332" style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '6px',
-            background: 'white',
-            color: 'var(--color-primary-dark)',
-            padding: '6px 20px 6px 6px',
+            gap: '8px',
+            background: 'var(--color-primary)',
+            color: 'white',
+            padding: '6px 18px 6px 6px',
             borderRadius: '9999px',
             fontWeight: 600,
             fontSize: '14px',
             textDecoration: 'none',
+            boxShadow: '0 2px 8px rgba(30,73,106,0.25)',
           }}>
             <div style={{
               width: '32px',
               height: '32px',
-              background: 'var(--color-primary)',
+              background: 'rgba(255,255,255,0.18)',
               borderRadius: '50%',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: 'white'
             }}>
-              <Phone size={16} />
+              <Phone size={15} />
             </div>
             +971 50 648 6332
           </a>
