@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import { adminUpdateJob, type Job } from '@/app/_lib/api';
-import { getToken } from '@/app/_lib/auth';
+import { adminUpdateJob, type Job } from '../../../../_lib/api';
+import { getToken } from '../../../../_lib/auth';
 import { Briefcase, ArrowLeft, Building2, MapPin, DollarSign, FileText, Settings, Rocket, Clock, Save, Trash2, CheckCircle2, Loader2 } from 'lucide-react';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';

@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { adminGetJobs, adminDeleteJob, adminUpdateJob, type Job, JOB_TYPE_LABELS } from '@/app/_lib/api';
-import { getToken } from '@/app/_lib/auth';
+import { adminGetJobs, adminDeleteJob, adminUpdateJob, type Job, JOB_TYPE_LABELS } from '../../../_lib/api';
+import { getToken } from '../../../_lib/auth';
 import { Briefcase, MapPin, DollarSign, Users, MoreVertical, Edit2, Trash2, Power, PowerOff } from 'lucide-react';
 
 export default function AdminJobsPage() {

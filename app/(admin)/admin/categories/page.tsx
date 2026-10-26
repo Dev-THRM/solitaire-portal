@@ -8,8 +8,8 @@ import {
   adminUpdateCategory,
   adminDeactivateCategory,
   type Category,
-} from '@/app/_lib/api';
-import { getToken } from '@/app/_lib/auth';
+} from '../../../_lib/api';
+import { getToken } from '../../../_lib/auth';
 import { Tag, Plus, Edit2, PowerOff, Power, Check, X, Users, ChevronDown, ChevronUp } from 'lucide-react';
 
 export default function CategoriesPage() {

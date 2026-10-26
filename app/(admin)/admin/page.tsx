@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { adminGetJobs, adminGetApplications, type Job, type Application } from '@/app/_lib/api';
-import { getToken, getAdminInfo } from '@/app/_lib/auth';
+import { adminGetJobs, adminGetApplications, type Job, type Application } from '../../_lib/api';
+import { getToken, getAdminInfo } from '../../_lib/auth';
 import { Briefcase, Inbox, Activity, AlertCircle, ArrowRight, User } from 'lucide-react';
 
 export default function AdminDashboard() {
