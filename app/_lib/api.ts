@@ -9,6 +9,10 @@ export type Job = {
   location: string;
   type: 'FULL_TIME' | 'PART_TIME' | 'REMOTE' | 'CONTRACT' | 'INTERNSHIP';
   salary?: string;
+  experienceMin?: number | null;
+  experienceMax?: number | null;
+  salaryMin?: number | null;
+  salaryMax?: number | null;
   description: string;
   requirements: string;
   benefits?: string;
@@ -20,7 +24,7 @@ export type Job = {
 export type Application = {
   id: string;
   jobId: string;
-  job?: { title: string; company: string };
+  job?: { title: string; company: string; location?: string };
   firstName: string;
   lastName: string;
   email: string;

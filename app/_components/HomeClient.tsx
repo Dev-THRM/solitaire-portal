@@ -75,22 +75,22 @@ const FEATURES = [
   { icon: <Target size={36} strokeWidth={1.5} color="var(--color-primary)" />, title: 'Tailored Solutions', desc: 'We match the right people to your unique needs.' },
 ];
 
-const staggerContainer = {
+const staggerContainer: any = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.4 } },
 };
 
-const fadeUp = {
+const fadeUp: any = {
   hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
 };
 
-const scaleUp = {
+const scaleUp: any = {
   hidden: { opacity: 0, scale: 0.8 },
   visible: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: "easeOut" } },
 };
 
-const wordAnimation = {
+const wordAnimation: any = {
   hidden: { y: "100%", opacity: 0 },
   visible: { y: 0, opacity: 1, transition: { ease: [0.33, 1, 0.68, 1], duration: 0.8 } }
 };
@@ -383,7 +383,7 @@ function ServiceCard({ icon, title, desc, delay = 0 }: { icon: React.ReactNode, 
             width: '64px', height: '64px', background: 'var(--color-surface-2)', borderRadius: '20px',
             display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 'auto'
           }}>
-            {React.cloneElement(icon as React.ReactElement, { size: 32, color: 'var(--color-primary)' })}
+            {React.cloneElement(icon as any, { size: 32, color: 'var(--color-primary)' })}
           </div>
           <div style={{ marginTop: 'auto' }}>
             <h3 style={{ fontSize: '24px', color: 'var(--color-text)', letterSpacing: '-0.02em', marginBottom: '0' }}>{title}</h3>
@@ -400,7 +400,7 @@ function ServiceCard({ icon, title, desc, delay = 0 }: { icon: React.ReactNode, 
           transform: 'rotateY(180deg)'
         }}>
           <div style={{ width: '48px', height: '48px', background: 'rgba(255,255,255,0.1)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
-            {React.cloneElement(icon as React.ReactElement, { size: 24, color: 'white' })}
+            {React.cloneElement(icon as any, { size: 24, color: 'white' })}
           </div>
           <h3 style={{ fontSize: '22px', color: 'white', letterSpacing: '-0.02em', marginBottom: '16px' }}>{title}</h3>
           <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.8)', lineHeight: 1.6, margin: 0 }}>{desc}</p>
@@ -450,7 +450,7 @@ function GridUnfoldStack() {
                   width: '40px', height: '40px', background: 'rgba(255,255,255,0.05)', 
                   borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center'
                 }}>
-                  {React.cloneElement(feat.icon as React.ReactElement, { size: 20, color: 'rgba(255,255,255,0.8)' })}
+                  {React.cloneElement(feat.icon as any, { size: 20, color: 'rgba(255,255,255,0.8)' })}
                 </div>
                 <h3 style={{ fontSize: '18px', letterSpacing: '-0.02em', fontWeight: 500, color: 'white', margin: 0 }}>{feat.title}</h3>
              </div>

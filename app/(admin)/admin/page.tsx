@@ -159,7 +159,7 @@ export default function AdminDashboard() {
                     <p style={{ fontSize: 13, color: 'var(--color-text-muted)', marginTop: 2 }}>{app.job?.location}</p>
                   </div>
                   <div>
-                    <span className={`badge ${app.status === 'PENDING' ? 'badge-warning' : app.status === 'SHORTLISTED' ? 'badge-success' : app.status === 'REJECTED' ? 'badge-error' : 'badge-neutral'}`} style={{ padding: '6px 12px' }}>
+                    <span className={`badge ${app.status === 'PENDING' ? 'badge-warning' : (app.status as string) === 'SHORTLISTED' || app.status === 'ACCEPTED' ? 'badge-success' : app.status === 'REJECTED' ? 'badge-error' : 'badge-neutral'}`} style={{ padding: '6px 12px' }}>
                       {app.status}
                     </span>
                   </div>
