@@ -22,7 +22,7 @@ import { getToken } from '@/app/_lib/auth';
 import {
   Mail, Phone, FileText, CheckCircle2, Clock, Eye, XCircle, Search,
   User, Folder, ArrowRightLeft, PauseCircle, RefreshCw, Sparkles,
-  Plus, Trash2, AlertCircle, ChevronRight, Brain, ChevronDown,
+  Plus, Trash2, AlertCircle, ChevronRight, Brain, ChevronDown, Banknote,
 } from 'lucide-react';
 
 const STATUS_CONFIG: Record<string, any> = {
@@ -575,6 +575,20 @@ function ApplicationsPageContent() {
                             <div style={{ fontSize: 13, color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: 6 }}>
                               <Mail size={12} /> {app.email}
                             </div>
+                            {(app.noticePeriod || app.expectedCtc) && (
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6, flexWrap: 'wrap' }}>
+                                {app.noticePeriod && (
+                                  <span style={{ fontSize: 11, color: 'var(--color-primary)', background: 'var(--color-primary-light)', padding: '2px 8px', borderRadius: 6, fontWeight: 500, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                                    <Clock size={11} /> {app.noticePeriod}
+                                  </span>
+                                )}
+                                {app.expectedCtc && (
+                                  <span style={{ fontSize: 11, color: '#047857', background: '#d1fae5', padding: '2px 8px', borderRadius: 6, fontWeight: 500, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                                    Exp: {app.expectedCtc}
+                                  </span>
+                                )}
+                              </div>
+                            )}
                           </td>
                           <td style={{ padding: '16px 24px', fontSize: 14, color: 'var(--color-text)' }}>
                             {app.job?.title ?? '—'}
@@ -623,6 +637,41 @@ function ApplicationsPageContent() {
                                         </div>
                                       )}
                                     </div>
+
+                                    {/* Compensation & Availability */}
+                                    {(app.currentCtc || app.expectedCtc || app.noticePeriod) && (
+                                      <div style={{ background: 'var(--color-surface-2)', padding: 14, borderRadius: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                                        <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-primary)' }}>
+                                          Compensation & Availability
+                                        </div>
+                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 12 }}>
+                                          {app.currentCtc && (
+                                            <div style={{ background: 'white', padding: '10px 12px', borderRadius: 10, border: '1px solid var(--color-border)' }}>
+                                              <span style={{ fontSize: 11, color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: 5, fontWeight: 500 }}>
+                                                <Banknote size={12} /> Current CTC
+                                              </span>
+                                              <span style={{ fontWeight: 700, fontSize: 13, color: 'var(--color-text)', marginTop: 4, display: 'block' }}>{app.currentCtc}</span>
+                                            </div>
+                                          )}
+                                          {app.expectedCtc && (
+                                            <div style={{ background: 'white', padding: '10px 12px', borderRadius: 10, border: '1px solid var(--color-border)' }}>
+                                              <span style={{ fontSize: 11, color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: 5, fontWeight: 500 }}>
+                                                <Banknote size={12} /> Expected CTC
+                                              </span>
+                                              <span style={{ fontWeight: 700, fontSize: 13, color: 'var(--color-primary)', marginTop: 4, display: 'block' }}>{app.expectedCtc}</span>
+                                            </div>
+                                          )}
+                                          {app.noticePeriod && (
+                                            <div style={{ background: 'white', padding: '10px 12px', borderRadius: 10, border: '1px solid var(--color-border)' }}>
+                                              <span style={{ fontSize: 11, color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: 5, fontWeight: 500 }}>
+                                                <Clock size={12} /> Notice Period
+                                              </span>
+                                              <span style={{ fontWeight: 700, fontSize: 13, color: 'var(--color-text)', marginTop: 4, display: 'block' }}>{app.noticePeriod}</span>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    )}
 
                                     {/* Update Status */}
                                     <div style={{ background: 'var(--color-surface-2)', padding: 16, borderRadius: 14 }}>

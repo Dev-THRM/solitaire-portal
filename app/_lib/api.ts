@@ -25,6 +25,9 @@ export type Application = {
   lastName: string;
   email: string;
   phone?: string;
+  currentCtc?: string;
+  expectedCtc?: string;
+  noticePeriod?: string;
   coverLetter: string;
   resumeUrl?: string;
   status: 'PENDING' | 'REVIEWED' | 'CATEGORIZED' | 'ACCEPTED' | 'SWITCHED' | 'ON_HOLD' | 'REJECTED';
