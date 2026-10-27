@@ -333,3 +333,23 @@ a:hover { color: var(--color-primary-dark); }
   text-align: center;
   margin-top: 8px;
 }
+
+/* ── Navbar Desktop vs Mobile Visibility ──────────────────────────────────── */
+@media (max-width: 767px) {
+  .nav-desktop-only {
+    display: none !important;
+  }
+  .nav-mobile-only {
+    display: flex !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .nav-desktop-only {
+    display: flex !important;
+  }
+  .nav-mobile-only {
+    display: none !important;
+  }
+}
+

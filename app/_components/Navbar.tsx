@@ -25,9 +25,9 @@ export default function Navbar() {
 
   const navLinks = [
     { href: '/', label: 'Home', icon: Home },
+    { href: '/about', label: 'About Us', icon: Info },
     { href: '/jobs', label: 'Jobs', icon: Briefcase },
     { href: '/blogs', label: 'Blogs', icon: BookOpen },
-    { href: '/#about', label: 'About Us', icon: Info },
     { href: '/#services', label: 'Our Services', icon: Layers },
     { href: '/#why-us', label: 'Why Us', icon: Award },
     { href: '/#contact', label: 'Contact Us', icon: Mail },
@@ -84,8 +84,8 @@ export default function Navbar() {
           />
         </Link>
 
-        {/* Desktop Nav Links (Hidden on mobile) */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '22px' }} className="hidden md:flex">
+        {/* Desktop Nav Links (Hidden on mobile, only shown on desktop) */}
+        <div className="nav-desktop-only" style={{ alignItems: 'center', gap: '22px' }}>
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -105,8 +105,8 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Desktop Phone Action (Hidden on mobile for a plain navbar) */}
-        <div className="hidden md:flex" style={{ alignItems: 'center', gap: '8px' }}>
+        {/* Desktop Phone Action (Hidden on mobile for a plain navbar, visible on desktop) */}
+        <div className="nav-desktop-only" style={{ alignItems: 'center', gap: '8px' }}>
           <a
             href="tel:+971506486332"
             style={{
@@ -141,20 +141,19 @@ export default function Navbar() {
           </a>
         </div>
 
-        {/* Mobile 3-Lines (Hamburger) Toggle Button (Visible only on mobile) */}
+        {/* Mobile 3-Lines (Hamburger) Toggle Button (STRICTLY MOBILE ONLY: hidden on desktop) */}
         <button
           type="button"
           id="mobile-menu-toggle-btn"
           aria-label={mobileMenuOpen ? 'Close Menu' : 'Open Navigation'}
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden"
+          className="nav-mobile-only"
           style={{
             width: '40px',
             height: '40px',
             borderRadius: '50%',
             background: mobileMenuOpen ? 'var(--color-primary)' : 'rgba(0,0,0,0.05)',
             border: 'none',
-            display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
@@ -223,7 +222,7 @@ export default function Navbar() {
                 zIndex: -1,
                 pointerEvents: 'auto',
               }}
-              className="md:hidden"
+              className="nav-mobile-only"
             />
 
             {/* Dropdown Container */}
@@ -243,12 +242,11 @@ export default function Navbar() {
                 padding: '16px 12px 18px',
                 boxShadow: '0 20px 40px rgba(0, 0, 0, 0.18)',
                 border: '1px solid rgba(0, 0, 0, 0.08)',
-                display: 'flex',
                 flexDirection: 'column',
                 gap: '6px',
                 pointerEvents: 'auto',
               }}
-              className="md:hidden"
+              className="nav-mobile-only"
             >
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                 {navLinks.map((link) => {
