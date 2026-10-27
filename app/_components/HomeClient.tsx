@@ -572,7 +572,7 @@ function AboutReveal() {
   const LINE_1 = ['We', 'place', 'exceptional'];
   const LINE_2 = ['people', 'in', 'the'];
   return (
-    <section style={{ background: 'white', overflow: 'hidden' }} className="py-24 md:py-36">
+    <section id="about" style={{ background: 'white', overflow: 'hidden' }} className="py-24 md:py-36">
       <div className="container" style={{ maxWidth: '1000px' }}>
         <motion.div
           initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }}
@@ -618,14 +618,14 @@ function AboutReveal() {
             Solitaire is Dubai’s premier staffing partner for private households and businesses.
             We connect discerning clients with pre-screened, trained professionals who elevate everyday living.
           </p>
-          <a
-            href="#contact" id="about-cta"
+          <Link
+            href="/about" id="about-cta"
             style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: '#1a1d20', color: 'white', padding: '16px 32px', borderRadius: '9999px', fontSize: '14px', fontWeight: 600, textDecoration: 'none', transition: 'all 0.3s ease', flexShrink: 0 }}
             onMouseOver={e => { (e.currentTarget as HTMLElement).style.background = '#333'; }}
             onMouseOut={e => { (e.currentTarget as HTMLElement).style.background = '#1a1d20'; }}
           >
-            About Us <ArrowUpRight size={16} />
-          </a>
+            About Us & Leadership <ArrowUpRight size={16} />
+          </Link>
         </motion.div>
       </div>
     </section>
