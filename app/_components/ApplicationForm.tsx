@@ -59,8 +59,17 @@ export default function ApplicationForm({ jobId, jobTitle }: ApplicationFormProp
     if (!form.currentCtc.trim()) e.currentCtc = 'Current CTC is required (or enter N/A)';
     if (!form.expectedCtc.trim()) e.expectedCtc = 'Expected CTC is required';
     if (!form.noticePeriod.trim()) e.noticePeriod = 'Notice period is required';
-    if (!form.resumeFile) e.resumeFile = 'Resume document is required';
-    else if (form.resumeFile.size > 5 * 1024 * 1024) e.resumeFile = 'File must be under 5MB';
+    if (!form.resumeFile) {
+      e.resumeFile = 'Resume document is required';
+    } else if (form.resumeFile.size > 5 * 1024 * 1024) {
+      e.resumeFile = 'File must be under 5MB';
+    } else {
+      const allowedExts = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png'];
+      const fileExt = '.' + (form.resumeFile.name.split('.').pop() || '').toLowerCase();
+      if (!allowedExts.includes(fileExt)) {
+        e.resumeFile = 'Invalid file format. Allowed: PDF, DOC/DOCX, JPEG, PNG';
+      }
+    }
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -350,7 +359,7 @@ export default function ApplicationForm({ jobId, jobTitle }: ApplicationFormProp
           <input
             id="app-resumeFile"
             type="file"
-            accept=".pdf,.doc,.docx"
+            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,image/jpeg,image/png"
             className="input"
             style={{ paddingLeft: 44, borderRadius: 12, background: 'var(--color-surface-2)', borderColor: errors.resumeFile ? '#ef4444' : undefined }}
             onChange={(e) => {
@@ -361,7 +370,7 @@ export default function ApplicationForm({ jobId, jobTitle }: ApplicationFormProp
         </div>
         {errors.resumeFile && <span className="form-error" style={{ color: '#ef4444', fontSize: 13, marginTop: 6, display: 'block' }}>{errors.resumeFile}</span>}
         <span style={{ fontSize: 13, color: 'var(--color-text-subtle)', marginTop: 8, display: 'block' }}>
-          Upload your CV (PDF or DOC/DOCX, max 5MB).
+          Upload your CV (PDF, DOC/DOCX, JPEG, or PNG, max 5MB).
         </span>
       </div>
 

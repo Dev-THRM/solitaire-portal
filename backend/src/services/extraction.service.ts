@@ -1,6 +1,8 @@
 import path from 'path';
+import fs from 'fs';
 import { PDFParse } from 'pdf-parse';
 import mammoth from 'mammoth';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export interface ParsedSections {
   summary: string;
@@ -12,7 +14,7 @@ export interface ParsedSections {
 // ── Text Extraction ───────────────────────────────────────────────────────────
 
 /**
- * Extract raw text from a PDF or DOCX file on disk.
+ * Extract raw text from a PDF, DOCX, or image (JPEG/PNG) file on disk.
  */
 export async function extractText(filePath: string): Promise<string> {
   const ext = path.extname(filePath).toLowerCase();
@@ -23,6 +25,10 @@ export async function extractText(filePath: string): Promise<string> {
 
   if (ext === '.doc' || ext === '.docx') {
     return extractFromDocx(filePath);
+  }
+
+  if (ext === '.jpg' || ext === '.jpeg' || ext === '.png') {
+    return extractFromImage(filePath);
   }
 
   throw new Error(`Unsupported file type: ${ext}`);
@@ -45,6 +51,35 @@ async function extractFromPdf(filePath: string): Promise<string> {
 async function extractFromDocx(filePath: string): Promise<string> {
   const result = await mammoth.extractRawText({ path: filePath });
   return result.value;
+}
+
+async function extractFromImage(filePath: string): Promise<string> {
+  const ext = path.extname(filePath).toLowerCase();
+  const mimeType = ext === '.png' ? 'image/png' : 'image/jpeg';
+  const apiKey = process.env.GEMINI_API_KEY;
+
+  if (!apiKey) {
+    throw new Error('GEMINI_API_KEY environment variable is not set; cannot extract text from resume image');
+  }
+
+  const genAI = new GoogleGenerativeAI(apiKey);
+  const modelName = process.env.GEMINI_MODEL || 'gemini-3.6-flash';
+  const model = genAI.getGenerativeModel({ model: modelName });
+
+  const fileBuffer = await fs.promises.readFile(filePath);
+  const base64Data = fileBuffer.toString('base64');
+
+  const result = await model.generateContent([
+    {
+      inlineData: {
+        data: base64Data,
+        mimeType,
+      },
+    },
+    'Extract all readable text verbatim from this resume/CV image. Retain structure, headings, dates, experience details, and contact information. Output only the plain extracted text without any conversational preamble or markdown formatting.',
+  ]);
+
+  return result.response.text();
 }
 
 // ── Text Cleaning ─────────────────────────────────────────────────────────────
