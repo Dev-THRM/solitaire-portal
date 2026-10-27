@@ -4,25 +4,44 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build --webpack",
+    "build": "prisma generate && next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "postinstall": "prisma generate",
+    "lint": "eslint",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@prisma/client": "^5.22.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "bcryptjs": "^3.0.3",
     "framer-motion": "^13.2.0",
+    "googleapis": "^188.0.0",
+    "jsonwebtoken": "^9.0.3",
     "lucide-react": "^1.43.0",
+    "mammoth": "^1.13.0",
     "next": "16.4.1",
+    "nodemailer": "^10.2.1",
+    "pdf-parse": "^2.4.5",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "uuid": "^14.0.3",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/nodemailer": "^8.0.2",
+    "@types/pdf-parse": "^1.1.5",
+    "@types/uuid": "^10.0.0",
     "eslint": "^9",
-    "eslint-config-next": "16.3.4"
+    "eslint-config-next": "16.3.4",
+    "prisma": "^5.22.0"
   }
 }
