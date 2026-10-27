@@ -10,6 +10,7 @@ import applicationsRouter from './routes/applications.routes';
 import authRouter from './routes/auth.routes';
 import categoriesRouter from './routes/categories.routes';
 import categorizationRouter from './routes/categorization.routes';
+import blogsRouter from './routes/blogs.routes';
 // [DISABLED FOR BASIC TESTING]
 // import { verifyEmailConfig } from './config/email';
 import prisma from './config/db';
@@ -53,6 +54,7 @@ app.use('/api/jobs', jobsRouter);
 app.use('/api/apply', applicationsRouter);
 app.use('/api/admin/categories', categoriesRouter);
 app.use('/api/admin/applications', categorizationRouter);
+app.use('/api/blogs', blogsRouter);
 
 // ── 404 Handler ───────────────────────────────────────────────────────────────
 app.use((_req, res) => {

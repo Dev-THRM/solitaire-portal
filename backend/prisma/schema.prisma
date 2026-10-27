@@ -173,3 +173,34 @@ enum CategorySource {
   LLM
   MANUAL
 }
+
+// ── Blog Posts ────────────────────────────────────────────────────────────────
+
+model BlogPost {
+  id              String    @id @default(cuid())
+  title           String    @db.VarChar(255)
+  slug            String    @unique @db.VarChar(255)
+  excerpt         String    @db.Text
+  content         String    @db.LongText
+  coverImage      String?   @db.VarChar(500)
+  category        String?   @db.VarChar(100)
+  author          String    @default("Solitaire Team") @db.VarChar(100)
+  readTime        String?   @db.VarChar(50)
+
+  // SEO fields
+  metaTitle       String?   @db.VarChar(255)
+  metaDescription String?   @db.Text
+  canonicalUrl    String?   @db.VarChar(500)
+  keywords        String?   @db.VarChar(500)
+
+  isPublished     Boolean   @default(true)
+  publishedAt     DateTime? @default(now())
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([isPublished])
+  @@index([slug])
+  @@index([category])
+  @@map("blog_posts")
+}
+

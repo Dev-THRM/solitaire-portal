@@ -280,3 +280,109 @@ export const STATUS_LABELS: Record<Application['status'], string> = {
   ON_HOLD: 'On Hold',
   REJECTED: 'Rejected',
 };
+
+// ── Blogs ───────────────────────────────────────────────────────────────────
+
+export type BlogPost = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  coverImage?: string | null;
+  category?: string | null;
+  author: string;
+  readTime?: string | null;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  canonicalUrl?: string | null;
+  keywords?: string | null;
+  isPublished: boolean;
+  publishedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type PaginatedBlogs = {
+  blogs: BlogPost[];
+  pagination: { page: number; limit: number; total: number; totalPages: number };
+};
+
+export async function getBlogs(
+  params: Record<string, string> = {},
+): Promise<PaginatedBlogs & { success: boolean }> {
+  const qs = new URLSearchParams(params).toString();
+  return apiFetch(`/api/blogs${qs ? `?${qs}` : ''}`);
+}
+
+export async function getBlogBySlug(slug: string): Promise<{ success: boolean; data: BlogPost }> {
+  return apiFetch(`/api/blogs/${slug}`);
+}
+
+export async function adminGetBlogs(
+  token: string,
+  params: Record<string, string> = {},
+): Promise<{
+  success: boolean;
+  blogs: BlogPost[];
+  counts: { total: number; published: number; draft: number };
+  pagination: { page: number; limit: number; total: number; totalPages: number };
+}> {
+  const qs = new URLSearchParams(params).toString();
+  return apiFetch(`/api/blogs/admin/all${qs ? `?${qs}` : ''}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+export async function adminGetBlog(
+  token: string,
+  id: string,
+): Promise<{ success: boolean; data: BlogPost }> {
+  return apiFetch(`/api/blogs/admin/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+export async function adminCreateBlog(
+  token: string,
+  data: Partial<BlogPost>,
+): Promise<{ success: boolean; data: BlogPost }> {
+  return apiFetch('/api/blogs/admin', {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+export async function adminUpdateBlog(
+  token: string,
+  id: string,
+  data: Partial<BlogPost>,
+): Promise<{ success: boolean; data: BlogPost }> {
+  return apiFetch(`/api/blogs/admin/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+export async function adminDeleteBlog(token: string, id: string): Promise<void> {
+  return apiFetch(`/api/blogs/admin/${id}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+export async function adminUploadBlogImage(
+  token: string,
+  file: File,
+): Promise<{ success: boolean; url: string }> {
+  const fd = new FormData();
+  fd.append('image', file);
+  return apiFetch('/api/blogs/admin/upload-image', {
+    method: 'POST',
+    body: fd,
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
