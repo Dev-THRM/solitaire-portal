@@ -89,20 +89,20 @@ export default function CategoriesPage() {
   return (
     <div style={{ width: '100%', maxWidth: 1200 }}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8">
         <div>
-          <h1 style={{ fontSize: 32, marginBottom: 8, color: 'var(--color-primary)' }}>Job Categories</h1>
-          <p style={{ color: 'var(--color-text-muted)', fontSize: 16 }}>
+          <h1 style={{ fontSize: 'clamp(24px, 4vw, 32px)', marginBottom: 6, color: 'var(--color-primary)' }}>Job Categories</h1>
+          <p style={{ color: 'var(--color-text-muted)', fontSize: 15 }}>
             {active.length} active categor{active.length !== 1 ? 'ies' : 'y'} · used for AI resume classification
           </p>
         </div>
         <button
           id="add-category-btn"
           onClick={() => { setShowAddForm((v) => !v); setError(null); }}
-          className="btn btn-primary btn-lg"
-          style={{ borderRadius: 12, boxShadow: '0 10px 25px rgba(30,73,106,0.2)', display: 'flex', alignItems: 'center', gap: 8 }}
+          className="btn btn-primary"
+          style={{ borderRadius: 12, padding: '12px 24px', boxShadow: '0 10px 25px rgba(30,73,106,0.2)', display: 'flex', alignItems: 'center', gap: 8 }}
         >
-          <Plus size={20} /> Add Category
+          <Plus size={18} /> Add Category
         </button>
       </div>
 

@@ -51,27 +51,25 @@ export default function JobFilters() {
       boxShadow: 'var(--shadow-sm)',
     }}>
       {/* Search bar */}
-      <form id="job-search-form" onSubmit={handleSearch} style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
+      <form id="job-search-form" onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3 mb-5">
         <input
           id="job-search-input"
           name="search"
           defaultValue={currentSearch}
           placeholder="Job title, company, keyword..."
-          className="input"
-          style={{ flex: 1 }}
+          className="input flex-1"
         />
         <input
           id="job-location-input"
           name="location"
           defaultValue={currentLocation}
           placeholder="Location..."
-          className="input"
-          style={{ width: 160 }}
+          className="input w-full sm:w-[170px]"
         />
         <button
           id="job-search-btn"
           type="submit"
-          className="btn btn-primary"
+          className="btn btn-primary w-full sm:w-auto"
           disabled={isPending}
         >
           {isPending ? '...' : 'Search'}

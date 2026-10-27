@@ -58,31 +58,31 @@ export default function JobCard({ job }: JobCardProps) {
       }}
       >
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16 }}>
-          <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-            <div style={{ width: 48, height: 48, borderRadius: 12, background: 'var(--color-surface-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-primary)', flexShrink: 0 }}>
-              <Briefcase size={24} strokeWidth={1.5} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 14, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: 14, alignItems: 'center', minWidth: 0, flex: '1 1 240px' }}>
+            <div style={{ width: 44, height: 44, borderRadius: 12, background: 'var(--color-surface-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-primary)', flexShrink: 0 }}>
+              <Briefcase size={22} strokeWidth={1.5} />
             </div>
-            <div>
-              <h2 style={{ fontSize: 18, fontWeight: 700, color: 'var(--color-text)', marginBottom: 4 }}>
+            <div style={{ minWidth: 0 }}>
+              <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--color-text)', marginBottom: 4, wordBreak: 'break-word' }}>
                 {job.title}
               </h2>
-              <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-                <span style={{ fontSize: 13, color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
-                  <MapPin size={14} /> {job.location}
+              <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: 12, color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
+                  <MapPin size={13} /> {job.location}
                 </span>
-                <span style={{ fontSize: 13, color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
-                  <Clock size={14} /> {job.experienceMin != null && job.experienceMax != null ? `${job.experienceMin}-${job.experienceMax} Yrs` : 'Experience Not Specified'}
+                <span style={{ fontSize: 12, color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
+                  <Clock size={13} /> {job.experienceMin != null && job.experienceMax != null ? `${job.experienceMin}-${job.experienceMax} Yrs` : 'Experience Not Specified'}
                 </span>
-                <span style={{ fontSize: 13, color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
-                  <DollarSign size={14} /> {job.salaryMin != null && job.salaryMax != null ? `AED ${job.salaryMin.toLocaleString('en-IN')} - AED ${job.salaryMax.toLocaleString('en-IN')}` : 'Competitive'}
+                <span style={{ fontSize: 12, color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
+                  <DollarSign size={13} /> {job.salaryMin != null && job.salaryMax != null ? `AED ${job.salaryMin.toLocaleString('en-IN')} - AED ${job.salaryMax.toLocaleString('en-IN')}` : 'Competitive'}
                 </span>
               </div>
             </div>
           </div>
           <span style={{ 
             background: typeBg, color: typeColor, 
-            padding: '4px 12px', borderRadius: 8, fontSize: 12, fontWeight: 600, flexShrink: 0 
+            padding: '4px 10px', borderRadius: 8, fontSize: 11, fontWeight: 700, flexShrink: 0 
           }}>
             {JOB_TYPE_LABELS[job.type]}
           </span>
@@ -90,8 +90,8 @@ export default function JobCard({ job }: JobCardProps) {
 
         {job.description && (
           <p style={{
-            marginTop: 16,
-            fontSize: 14,
+            marginTop: 14,
+            fontSize: 13,
             color: 'var(--color-text-muted)',
             lineHeight: 1.6,
             display: '-webkit-box',
@@ -106,11 +106,13 @@ export default function JobCard({ job }: JobCardProps) {
         {/* Footer */}
         <div style={{
           marginTop: 16,
-          paddingTop: 16,
+          paddingTop: 14,
           borderTop: '1px solid var(--color-surface-3)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: 12,
         }}>
           <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
             <span style={{ fontSize: 12, color: 'var(--color-text-subtle)', fontWeight: 500 }}>

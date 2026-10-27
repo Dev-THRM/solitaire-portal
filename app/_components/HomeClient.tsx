@@ -304,17 +304,17 @@ function VideoHero() {
         </button>
 
         {/* Dot indicators with progress bar */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', maxWidth: 'calc(100vw - 120px)', overflowX: 'auto', padding: '4px' }}>
           {VIDEOS.map((vid, i) => (
             <button key={i} onClick={() => setCurrent(i)} aria-label={`Go to ${vid.label}`} style={{
-              background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px'
+              background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', flexShrink: 0
             }}>
               {i === current && (
-                <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.7)', letterSpacing: '0.05em' }}>{vid.label}</span>
+                <span className="hidden sm:inline" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.7)', letterSpacing: '0.05em' }}>{vid.label}</span>
               )}
               <span style={{
                 display: 'block',
-                width: i === current ? '32px' : '8px',
+                width: i === current ? '28px' : '8px',
                 height: '4px',
                 borderRadius: '9999px',
                 background: i === current ? 'white' : 'rgba(255,255,255,0.3)',
@@ -412,27 +412,17 @@ function ServiceCard({ icon, title, desc, delay = 0 }: { icon: React.ReactNode, 
 
 function GridUnfoldStack() {
   return (
-    <div style={{ position: 'relative', height: '500px', display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-      {FEATURES.map((feat, idx) => {
-        // Calculate coordinates for a 2x2 grid
-        const isLeft = idx % 2 === 0;
-        const isTop = idx < 2;
-        
-        const targetX = isLeft ? -150 : 150;
-        const targetY = isTop ? -100 : 100;
-        
-        return (
+    <div style={{ width: '100%', maxWidth: '100%' }}>
+      {/* Mobile view (< md): natural responsive grid without overflow */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:hidden gap-4 w-full">
+        {FEATURES.map((feat, idx) => (
           <motion.div
             key={idx}
-            initial={{ opacity: 0, x: 0, y: 100, scale: 0.8 }} // Start as a tight stack slightly below
-            whileInView={{ opacity: 1, x: targetX, y: targetY, scale: 1 }} // Open into 2x2 grid
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ type: "spring", bounce: 0.3, duration: 1.2, delay: idx * 0.05 }}
-            whileHover={{ scale: 1.05, zIndex: 50, boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: idx * 0.08 }}
             style={{
-              position: 'absolute',
-              width: '280px',
-              height: '180px', // Landscape format
               borderRadius: '20px',
               background: 'linear-gradient(135deg, #183c58 0%, #0a1f30 100%)',
               border: '1px solid rgba(255,255,255,0.1)',
@@ -441,11 +431,55 @@ function GridUnfoldStack() {
               display: 'flex',
               flexDirection: 'column',
               color: 'white',
-              cursor: 'pointer',
-              zIndex: 10 - idx, // ensure stack looks correct initially
             }}
           >
-             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '14px' }}>
+              <div style={{
+                width: '40px', height: '40px', background: 'rgba(255,255,255,0.06)',
+                borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}>
+                {React.cloneElement(feat.icon as any, { size: 20, color: 'rgba(255,255,255,0.85)' })}
+              </div>
+              <h3 style={{ fontSize: '17px', letterSpacing: '-0.02em', fontWeight: 600, color: 'white', margin: 0 }}>{feat.title}</h3>
+            </div>
+            <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.65)', lineHeight: 1.5, margin: 0 }}>{feat.desc}</p>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Desktop view (md+): smooth 2x2 unfolding card animation */}
+      <div className="hidden md:flex relative h-[500px] justify-center items-center w-full">
+        {FEATURES.map((feat, idx) => {
+          const isLeft = idx % 2 === 0;
+          const isTop = idx < 2;
+          const targetX = isLeft ? -150 : 150;
+          const targetY = isTop ? -100 : 100;
+
+          return (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, x: 0, y: 100, scale: 0.8 }}
+              whileInView={{ opacity: 1, x: targetX, y: targetY, scale: 1 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ type: "spring", bounce: 0.3, duration: 1.2, delay: idx * 0.05 }}
+              whileHover={{ scale: 1.05, zIndex: 50, boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}
+              style={{
+                position: 'absolute',
+                width: '280px',
+                height: '180px',
+                borderRadius: '20px',
+                background: 'linear-gradient(135deg, #183c58 0%, #0a1f30 100%)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                boxShadow: '0 10px 30px rgba(0,0,0,0.2), inset 1px 1px 0 rgba(255,255,255,0.1)',
+                padding: '24px',
+                display: 'flex',
+                flexDirection: 'column',
+                color: 'white',
+                cursor: 'pointer',
+                zIndex: 10 - idx,
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
                 <div style={{ 
                   width: '40px', height: '40px', background: 'rgba(255,255,255,0.05)', 
                   borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center'
@@ -453,16 +487,16 @@ function GridUnfoldStack() {
                   {React.cloneElement(feat.icon as any, { size: 20, color: 'rgba(255,255,255,0.8)' })}
                 </div>
                 <h3 style={{ fontSize: '18px', letterSpacing: '-0.02em', fontWeight: 500, color: 'white', margin: 0 }}>{feat.title}</h3>
-             </div>
-
-             <div>
+              </div>
+              <div>
                 <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.5, margin: 0 }}>{feat.desc}</p>
-             </div>
-          </motion.div>
-        )
-      })}
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
     </div>
-  )
+  );
 }
 
 function MagneticButton({ children, href }: { children: React.ReactNode, href?: string }) {
@@ -538,12 +572,12 @@ function AboutReveal() {
   const LINE_1 = ['We', 'place', 'exceptional'];
   const LINE_2 = ['people', 'in', 'the'];
   return (
-    <section style={{ padding: '160px 0 140px', background: 'white', overflow: 'hidden' }}>
+    <section style={{ background: 'white', overflow: 'hidden' }} className="py-24 md:py-36">
       <div className="container" style={{ maxWidth: '1000px' }}>
         <motion.div
           initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          style={{ marginBottom: '40px' }}
+          style={{ marginBottom: '32px' }}
         >
           <span style={{ color: '#c9603e', fontSize: '13px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase' }}>
             Who We Are
@@ -551,9 +585,9 @@ function AboutReveal() {
         </motion.div>
         <motion.div
           initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }} variants={staggerContainer}
-          style={{ marginBottom: '56px' }}
+          style={{ marginBottom: '44px' }}
         >
-          <div style={{ fontSize: 'clamp(42px, 6.5vw, 84px)', fontWeight: 600, letterSpacing: '-0.04em', lineHeight: 1.0, color: '#1a1d20' }}>
+          <div style={{ fontSize: 'clamp(32px, 6.5vw, 84px)', fontWeight: 600, letterSpacing: '-0.04em', lineHeight: 1.05, color: '#1a1d20' }}>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.22em', overflow: 'hidden', marginBottom: '0.04em' }}>
               {LINE_1.map((word, i) => (
                 <div key={i} style={{ overflow: 'hidden' }}>
@@ -624,17 +658,18 @@ function StatsBar() {
     { target: 98,  suffix: '%', label: 'Placement Success', delay: 0.24 },
   ];
   return (
-    <section style={{ background: '#111827', padding: '110px 0' }}>
+    <section style={{ background: '#111827', padding: '90px 0' }}>
       <div className="container">
-        <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0' }}>
+        <div className="grid grid-cols-2 md:flex md:items-center md:justify-between gap-8 md:gap-0">
           {stats.map((s, i) => (
             <React.Fragment key={i}>
               <StatCounter {...s} />
               {i < stats.length - 1 && (
                 <motion.div
+                  className="hidden md:block"
                   initial={{ scaleY: 0, opacity: 0 }} whileInView={{ scaleY: 1, opacity: 1 }}
                   viewport={{ once: true }} transition={{ duration: 0.8, delay: i * 0.1 }}
-                  style={{ width: '1px', height: '64px', background: 'rgba(255,255,255,0.1)', flexShrink: 0, margin: '0 48px' }}
+                  style={{ width: '1px', height: '64px', background: 'rgba(255,255,255,0.1)', flexShrink: 0, margin: '0 28px' }}
                 />
               )}
             </React.Fragment>
@@ -667,14 +702,14 @@ function ChecklistItem({ label, delay }: { label: string; delay: number }) {
 // ── Service Standards ─────────────────────────────────────────────────────────
 function ServiceStandards() {
   return (
-    <section style={{ background: '#f8f7f5', padding: '140px 0' }}>
+    <section style={{ background: '#f8f7f5', padding: '120px 0' }}>
       <div className="container">
-        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '72px', flexWrap: 'wrap', gap: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '64px', flexWrap: 'wrap', gap: '24px' }}>
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
             <div style={{ display: 'inline-block', padding: '4px 16px', background: 'rgba(30,73,106,0.09)', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', color: 'var(--color-primary)', marginBottom: '20px', textTransform: 'uppercase' }}>
               Our Standards
             </div>
-            <h2 style={{ fontSize: 'clamp(34px, 4.5vw, 54px)', letterSpacing: '-0.035em', color: '#1a1d20', maxWidth: '520px', lineHeight: 1.1 }}>
+            <h2 style={{ fontSize: 'clamp(32px, 4.5vw, 54px)', letterSpacing: '-0.035em', color: '#1a1d20', maxWidth: '520px', lineHeight: 1.1 }}>
               Every hire meets our<br />rigorous criteria
             </h2>
           </motion.div>
@@ -685,23 +720,23 @@ function ServiceStandards() {
           </motion.p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 3fr', gap: '28px', alignItems: 'stretch' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-8 items-stretch">
           {/* Left: Staff image with floating stats card */}
           <motion.div
             initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            style={{ borderRadius: '24px', overflow: 'hidden', position: 'relative', minHeight: '580px' }}
+            style={{ borderRadius: '24px', overflow: 'hidden', position: 'relative', minHeight: '420px' }}
           >
             <img src="/images/luxury_staff_team.jpg" alt="Solitaire professional staff" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
             <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '55%', background: 'linear-gradient(to top, rgba(10,20,35,0.7) 0%, transparent 100%)' }} />
             <motion.div
               initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }} transition={{ delay: 0.6, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              style={{ position: 'absolute', bottom: '28px', left: '28px', right: '28px', background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(20px)', borderRadius: '18px', padding: '22px 28px', boxShadow: '0 8px 40px rgba(0,0,0,0.18)' }}
+              style={{ position: 'absolute', bottom: '20px', left: '20px', right: '20px', background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(20px)', borderRadius: '18px', padding: '18px 22px', boxShadow: '0 8px 40px rgba(0,0,0,0.18)' }}
             >
               <div style={{ fontSize: '12px', color: '#9ca3af', marginBottom: '8px', letterSpacing: '0.05em', textTransform: 'uppercase' }}>Placement Success Rate</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <span style={{ fontSize: '36px', fontWeight: 700, color: '#1a1d20', letterSpacing: '-0.04em', lineHeight: 1 }}>98%</span>
+                <span style={{ fontSize: '32px', fontWeight: 700, color: '#1a1d20', letterSpacing: '-0.04em', lineHeight: 1 }}>98%</span>
                 <div style={{ flex: 1 }}>
                   <div style={{ height: '7px', background: '#ede9e4', borderRadius: '99px', overflow: 'hidden', marginBottom: '6px' }}>
                     <motion.div
@@ -720,15 +755,16 @@ function ServiceStandards() {
           <motion.div
             initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            style={{ background: 'white', borderRadius: '24px', padding: '44px 48px', boxShadow: '0 4px 40px rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.04)', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0' }}
+            style={{ background: 'white', borderRadius: '24px', padding: '32px 28px', boxShadow: '0 4px 40px rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.04)' }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-0"
           >
-            <div style={{ paddingRight: '28px', borderRight: '1px solid rgba(0,0,0,0.07)' }}>
+            <div className="md:pr-6 md:border-r border-black/10">
               {STANDARDS_COL1.map((item, i) => <ChecklistItem key={item} label={item} delay={i * 0.055} />)}
             </div>
-            <div style={{ paddingLeft: '28px', paddingRight: '28px', borderRight: '1px solid rgba(0,0,0,0.07)' }}>
+            <div className="md:px-6 md:border-r border-black/10">
               {STANDARDS_COL2.map((item, i) => <ChecklistItem key={item} label={item} delay={0.1 + i * 0.055} />)}
             </div>
-            <div style={{ paddingLeft: '28px' }}>
+            <div className="md:pl-6">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }} transition={{ delay: 0.3, duration: 0.8 }}
@@ -817,14 +853,16 @@ function Testimonials() {
               key={active} custom={direction} variants={slideVariants}
               initial="enter" animate="center" exit="exit"
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}
+              className="grid grid-cols-1 md:grid-cols-2 gap-6"
             >
               {/* Featured large card */}
-              <div style={{ background: '#f8f7f5', borderRadius: '24px', padding: '52px', border: '1px solid rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                <div style={{ fontSize: '52px', color: '#e2ded9', fontFamily: 'Georgia, serif', lineHeight: 1, marginBottom: '24px' }}>&ldquo;</div>
-                <p style={{ fontSize: '20px', color: '#2a2a2a', lineHeight: 1.65, fontStyle: 'italic', flex: 1, margin: '0 0 40px' }}>{t.text}</p>
+              <div style={{ background: '#f8f7f5', borderRadius: '24px', border: '1px solid rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+                className="p-6 md:p-12"
+              >
+                <div style={{ fontSize: '48px', color: '#e2ded9', fontFamily: 'Georgia, serif', lineHeight: 1, marginBottom: '16px' }}>&ldquo;</div>
+                <p style={{ fontSize: '18px', color: '#2a2a2a', lineHeight: 1.65, fontStyle: 'italic', flex: 1, margin: '0 0 32px' }}>{t.text}</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'var(--color-primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 700 }}>{t.initial}</div>
+                  <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: 'var(--color-primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '17px', fontWeight: 700 }}>{t.initial}</div>
                   <div>
                     <div style={{ fontSize: '15px', fontWeight: 600, color: '#1a1d20' }}>{t.name}</div>
                     <div style={{ fontSize: '13px', color: '#9ca3af', marginTop: '2px' }}>{t.role}</div>
@@ -835,21 +873,21 @@ function Testimonials() {
                 </div>
               </div>
               {/* Two smaller side cards */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 {[1, 2].map(offset => {
                   const card = TESTIMONIALS[(active + offset) % TESTIMONIALS.length];
                   return (
                     <div key={offset}
                       onClick={() => { setDirection(offset); setActive((active + offset) % TESTIMONIALS.length); }}
-                      style={{ background: '#f8f7f5', borderRadius: '20px', padding: '32px', border: '1px solid rgba(0,0,0,0.04)', flex: 1, cursor: 'pointer', transition: 'all 0.3s ease', opacity: 0.72 }}
+                      style={{ background: '#f8f7f5', borderRadius: '20px', padding: '24px', border: '1px solid rgba(0,0,0,0.04)', flex: 1, cursor: 'pointer', transition: 'all 0.3s ease', opacity: 0.85 }}
                       onMouseOver={e => { (e.currentTarget as HTMLElement).style.opacity = '1'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'; }}
-                      onMouseOut={e =>  { (e.currentTarget as HTMLElement).style.opacity = '0.72'; (e.currentTarget as HTMLElement).style.transform = 'none'; }}
+                      onMouseOut={e =>  { (e.currentTarget as HTMLElement).style.opacity = '0.85'; (e.currentTarget as HTMLElement).style.transform = 'none'; }}
                     >
-                      <p style={{ fontSize: '15px', color: '#4a4a4a', lineHeight: 1.6, fontStyle: 'italic', marginBottom: '20px' }}>
+                      <p style={{ fontSize: '14px', color: '#4a4a4a', lineHeight: 1.6, fontStyle: 'italic', marginBottom: '16px' }}>
                         &ldquo;{card.text.slice(0, 80)}&hellip;&rdquo;
                       </p>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--color-primary-light)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: 700 }}>{card.initial}</div>
+                        <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: 'var(--color-primary-light)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700 }}>{card.initial}</div>
                         <div>
                           <div style={{ fontSize: '13px', fontWeight: 600, color: '#1a1d20' }}>{card.name}</div>
                           <div style={{ fontSize: '12px', color: '#9ca3af' }}>{card.role}</div>
@@ -879,24 +917,24 @@ function Testimonials() {
 
 function StickyScrollWhyUs() {
   return (
-    <section id="why-us" style={{ background: 'var(--color-primary-dark)', color: 'white', position: 'relative', paddingTop: '140px' }}>
-      <div className="container" style={{ display: 'flex', flexWrap: 'wrap', gap: '64px', alignItems: 'flex-start' }}>
-        {/* Sticky Left Side */}
-        <div style={{ flex: '1 1 400px', position: 'sticky', top: '140px', paddingBottom: '140px' }}>
-          <div style={{ display: 'inline-block', padding: '4px 16px', background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', color: 'white', marginBottom: '32px', textTransform: 'uppercase' }}>
+    <section id="why-us" style={{ background: 'var(--color-primary-dark)', color: 'white', position: 'relative' }} className="py-20 md:py-32">
+      <div className="container flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
+        {/* Left Side */}
+        <div className="w-full lg:w-[420px] lg:sticky lg:top-[120px] pb-6 lg:pb-28">
+          <div style={{ display: 'inline-block', padding: '4px 16px', background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', color: 'white', marginBottom: '24px', textTransform: 'uppercase' }}>
             Why Solitaire
           </div>
-          <h2 style={{ fontSize: 'clamp(40px, 5vw, 64px)', marginBottom: '32px', letterSpacing: '-0.03em', lineHeight: 1.1 , color: '#ffffff'}}>
+          <h2 style={{ fontSize: 'clamp(34px, 5vw, 64px)', marginBottom: '24px', letterSpacing: '-0.03em', lineHeight: 1.1 , color: '#ffffff'}}>
             A Higher Standard<br/>of Staffing
           </h2>
-          <p style={{ fontSize: '18px', color: 'rgba(255,255,255,0.7)', marginBottom: '48px', lineHeight: 1.7, maxWidth: '480px' }}>
+          <p style={{ fontSize: '17px', color: 'rgba(255,255,255,0.75)', marginBottom: '36px', lineHeight: 1.7, maxWidth: '480px' }}>
             We go beyond placements — we build long-term relationships based on trust, quality and understanding. Every candidate is meticulously matched to your unique lifestyle.
           </p>
           <MagneticButton href="#contact">LEARN MORE</MagneticButton>
         </div>
         
-        {/* Animated Right Side */}
-        <div style={{ flex: '1 1 600px', display: 'flex', alignItems: 'center', paddingBottom: '140px' }}>
+        {/* Right Side Cards */}
+        <div className="w-full flex-1 flex items-center pb-12 lg:pb-28">
           <GridUnfoldStack />
         </div>
       </div>

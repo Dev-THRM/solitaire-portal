@@ -146,7 +146,7 @@ export default function ApplicationForm({ jobId, jobTitle }: ApplicationFormProp
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
         <div className="form-group">
           <label htmlFor="app-firstName" className="form-label" style={{ fontWeight: 600 }}>First Name <span style={{color: '#ef4444'}}>*</span></label>
           <div style={{ position: 'relative' }}>
@@ -179,7 +179,7 @@ export default function ApplicationForm({ jobId, jobTitle }: ApplicationFormProp
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
         <div className="form-group">
           <label htmlFor="app-email" className="form-label" style={{ fontWeight: 600 }}>Email Address <span style={{color: '#ef4444'}}>*</span></label>
           <div style={{ position: 'relative' }}>
@@ -287,7 +287,7 @@ export default function ApplicationForm({ jobId, jobTitle }: ApplicationFormProp
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
         <div className="form-group">
           <label htmlFor="app-currentCtc" className="form-label" style={{ fontWeight: 600 }}>
             Current CTC <span style={{color: '#ef4444'}}>*</span>

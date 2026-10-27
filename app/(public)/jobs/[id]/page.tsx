@@ -63,7 +63,7 @@ export default async function JobDetailPage({ params }: PageProps) {
       </div>
 
       <div className="container" style={{ maxWidth: 1100, marginTop: 24 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24, alignItems: 'start' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6 items-start">
           {/* Main Content */}
           <div>
             {/* Job Header Card */}
