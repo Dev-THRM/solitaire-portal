@@ -1,8 +1,11 @@
 import type { Metadata } from 'next';
-import { getBlogs, type BlogPost } from '../../_lib/api';
+import { listPublishedBlogs } from '@/lib/blogs';
+import type { BlogPost } from '../../_lib/api';
 import BlogCard from '../../_components/BlogCard';
 import Link from 'next/link';
 import { Search, Sparkles, BookOpen, AlertCircle } from 'lucide-react';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Insights & Career Guides | Solitaire HR Consultancy Dubai',
@@ -51,8 +54,8 @@ export default async function BlogsPage({ searchParams }: BlogsPageProps) {
       apiParams.search = currentSearch.trim();
     }
 
-    const res = await getBlogs(apiParams);
-    blogs = res.blogs || [];
+    const res = await listPublishedBlogs(apiParams);
+    blogs = (res.blogs as any) || [];
     pagination = res.pagination || pagination;
   } catch (err) {
     error = true;

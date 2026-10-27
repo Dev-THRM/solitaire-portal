@@ -1,6 +1,6 @@
-// ── API utility for calling the Express backend ───────────────────────────
+// ── API utility for calling the Next.js Route Handlers ────────────────────────
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';
+const API_BASE = '';
 
 export type Job = {
   id: string;

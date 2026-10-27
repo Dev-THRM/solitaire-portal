@@ -1,8 +1,11 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getJob, JOB_TYPE_LABELS } from '../../../_lib/api';
+import { getJobById } from '@/lib/jobs';
+import { JOB_TYPE_LABELS } from '../../../_lib/api';
 import { ArrowLeft, MapPin, DollarSign, Clock, Briefcase, ChevronRight, CheckCircle2 } from 'lucide-react';
+
+export const dynamic = 'force-dynamic';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -11,7 +14,8 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   try {
     const { id } = await params;
-    const { data: job } = await getJob(id);
+    const job = await getJobById(id);
+    if (!job) return { title: 'Job Not Found' };
     return {
       title: `${job.title} — Careers at Solitaire`,
       description: job.description.slice(0, 155),
@@ -26,8 +30,8 @@ export default async function JobDetailPage({ params }: PageProps) {
 
   let job;
   try {
-    const res = await getJob(id);
-    job = res.data;
+    job = await getJobById(id);
+    if (!job) notFound();
   } catch {
     notFound();
   }

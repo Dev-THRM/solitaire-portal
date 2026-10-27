@@ -7,7 +7,6 @@ import { adminUpdateJob, type Job } from '../../../../_lib/api';
 import { getToken } from '../../../../_lib/auth';
 import { Briefcase, ArrowLeft, Building2, MapPin, DollarSign, FileText, Settings, Rocket, Clock, Save, Trash2, CheckCircle2, Loader2 } from 'lucide-react';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';
 const JOB_TYPES = ['FULL_TIME', 'PART_TIME', 'REMOTE', 'CONTRACT', 'INTERNSHIP'] as const;
 
 export default function EditJobPage() {
@@ -24,7 +23,7 @@ export default function EditJobPage() {
     const token = getToken();
     if (!token) { router.push('/login'); return; }
 
-    fetch(`${API_BASE}/api/jobs/${id}`, { headers: { Authorization: `Bearer ${token}` } })
+    fetch(`/api/jobs/${id}`, { headers: { Authorization: `Bearer ${token}` } })
       .then((r) => r.json())
       .then((res) => setForm(res.data))
       .catch(() => router.push('/admin/jobs'));

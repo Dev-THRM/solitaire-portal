@@ -35,8 +35,6 @@ const STATUS_CONFIG: Record<string, any> = {
   REJECTED:    { label: 'Rejected',    icon: XCircle,        color: '#ef4444', bg: '#fee2e2' },
 };
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';
-
 // ── Confidence bar ────────────────────────────────────────────────────────────
 function ConfidenceBar({ value }: { value: number }) {
   const pct = Math.round(value * 100);
@@ -449,7 +447,7 @@ function ApplicationsPageContent() {
     const token = getToken()!;
     setUpdatingStatus(true);
     try {
-      const res = await fetch(`${API_BASE}/api/apply/admin/${appId}/status`, {
+      const res = await fetch(`/api/apply/admin/${appId}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ status, jobId: targetJobId }),

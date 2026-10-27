@@ -1,10 +1,12 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-import { getJobs } from '../../_lib/api';
+import { listJobs } from '@/lib/jobs';
 import JobCard from '../../_components/JobCard';
 import JobFilters from '../../_components/JobFilters';
 import Link from 'next/link';
 import { AlertCircle } from 'lucide-react';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Careers',
@@ -18,7 +20,7 @@ interface PageProps {
 async function JobList({ params }: { params: Record<string, string> }) {
   let result;
   try {
-    result = await getJobs(params);
+    result = await listJobs(params);
   } catch {
     return (
       <div style={{

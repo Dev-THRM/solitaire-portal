@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getBlogBySlug, type BlogPost } from '../../../_lib/api';
+import { getBlogBySlug } from '@/lib/blogs';
+import type { BlogPost } from '../../../_lib/api';
 import {
   ArrowLeft,
   Clock,
@@ -13,6 +14,8 @@ import {
   ArrowRight,
 } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
 }
@@ -20,8 +23,7 @@ interface BlogPostPageProps {
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   try {
     const { slug } = await params;
-    const res = await getBlogBySlug(slug);
-    const blog = res.data;
+    const blog = await getBlogBySlug(slug);
 
     if (!blog) {
       return { title: 'Article Not Found — Solitaire HR' };
@@ -64,9 +66,9 @@ export default async function BlogPostDetailPage({ params }: BlogPostPageProps) 
 
   let blog: BlogPost;
   try {
-    const res = await getBlogBySlug(slug);
-    if (!res.data) notFound();
-    blog = res.data;
+    const data = await getBlogBySlug(slug);
+    if (!data) notFound();
+    blog = data as any;
   } catch {
     notFound();
   }
