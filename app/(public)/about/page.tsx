@@ -201,8 +201,10 @@ export default function AboutPage() {
             justifyContent: 'center',
             gap: '16px',
           }}>
-            <Link
-              href="/#contact"
+            <a
+              href="https://wa.me/971506486332"
+              target="_blank"
+              rel="noopener noreferrer"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -220,7 +222,7 @@ export default function AboutPage() {
             >
               <span>Get in Touch</span>
               <ArrowRight size={16} />
-            </Link>
+            </a>
 
             <Link
               href="/jobs"
@@ -720,8 +722,10 @@ export default function AboutPage() {
               <span>Call +971 50 648 6332</span>
             </a>
 
-            <Link
-              href="/#contact"
+            <a
+              href="https://wa.me/971506486332"
+              target="_blank"
+              rel="noopener noreferrer"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -740,7 +744,7 @@ export default function AboutPage() {
             >
               <span>Send An Inquiry</span>
               <ArrowRight size={16} />
-            </Link>
+            </a>
           </div>
         </div>
       </section>

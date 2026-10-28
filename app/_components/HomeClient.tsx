@@ -260,13 +260,13 @@ function VideoHero() {
             }}>
               Discover Services <ChevronRight size={18} style={{ marginLeft: '4px' }} />
             </Link>
-            <Link href="#contact" className="btn" style={{
+            <a href="https://wa.me/971506486332" target="_blank" rel="noopener noreferrer" className="btn" style={{
               background: 'rgba(255,255,255,0.12)', color: 'white',
               border: '1px solid rgba(255,255,255,0.25)', backdropFilter: 'blur(8px)',
-              padding: '16px 36px', fontSize: '15px', fontWeight: 500
+              padding: '16px 36px', fontSize: '15px', fontWeight: 500, textDecoration: 'none'
             }}>
               Contact Us
-            </Link>
+            </a>
           </motion.div>
 
           {/* Trust Badges */}
@@ -499,7 +499,7 @@ function GridUnfoldStack() {
   );
 }
 
-function MagneticButton({ children, href }: { children: React.ReactNode, href?: string }) {
+function MagneticButton({ children, href, target, rel }: { children: React.ReactNode, href?: string, target?: string, rel?: string }) {
   const ref = useRef<HTMLAnchorElement | HTMLButtonElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -530,11 +530,13 @@ function MagneticButton({ children, href }: { children: React.ReactNode, href?: 
     boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
   };
 
-  const Component = motion(href ? Link : 'button');
+  const Component = motion(href ? (href.startsWith('http') || href.startsWith('//') ? 'a' : Link) : 'button');
 
   return (
     <Component
       href={href as any}
+      target={target}
+      rel={rel}
       ref={ref as any}
       onMouseMove={handleMouse}
       onMouseLeave={reset}
@@ -1005,7 +1007,7 @@ export default function HomeClient() {
           <h2 style={{ fontSize: 'clamp(36px, 5vw, 64px)', color: 'white', marginBottom: '56px', letterSpacing: '-0.03em', lineHeight: 1.1 }}>
             Find the Right People<br />for Your Home or Business
          </h2>
-          <MagneticButton href="tel:+971506486332">
+          <MagneticButton href="https://wa.me/971506486332" target="_blank" rel="noopener noreferrer">
             GET IN TOUCH
           </MagneticButton>
         </motion.div>
