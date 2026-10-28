@@ -13,11 +13,24 @@ function buildDatabaseUrl(): string {
   const password = process.env.DB_PASSWORD;
   const name     = process.env.DB_NAME;
 
+  // DEBUG — remove after confirming connection works
+  console.log('[prisma] DB vars:', {
+    DB_HOST:     host     ?? '(not set)',
+    DB_PORT:     port,
+    DB_USER:     user     ?? '(not set)',
+    DB_PASSWORD: password ? `(set, length=${password.length})` : '(not set)',
+    DB_NAME:     name     ?? '(not set)',
+    DATABASE_URL: process.env.DATABASE_URL ? '(set)' : '(not set)',
+  });
+
   if (host && user && password !== undefined && name) {
-    return `mysql://${user}:${encodeURIComponent(password)}@${host}:${port}/${name}`;
+    const url = `mysql://${user}:${encodeURIComponent(password)}@${host}:${port}/${name}`;
+    console.log('[prisma] Using constructed URL:', url.replace(/:([^@]+)@/, ':***@'));
+    return url;
   }
 
   // Fallback: legacy single DATABASE_URL var
+  console.log('[prisma] Falling back to DATABASE_URL');
   return process.env.DATABASE_URL ?? '';
 }
 
