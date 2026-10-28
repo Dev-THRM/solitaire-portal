@@ -1,6 +1,7 @@
 import path from 'path';
 import prisma from './prisma';
-import { extractAndCategorize } from './categorization';
+// Dynamic import for extractAndCategorize is used inside createApplication
+// so route handlers like /api/apply/admin (listing applications) do not load pdf-parse or pdfjs-dist at module startup.
 import { sendApplicationEmail, sendConfirmationEmail, sendStatusUpdateEmail } from './email';
 import { appendApplicationToSheet } from './sheets';
 
@@ -29,13 +30,13 @@ export async function createApplication(data: CreateApplicationDto) {
 
   const application = await prisma.application.create({ data });
 
-  // Fire-and-forget: extract resume text + categorize via Gemini
+  // Fire-and-forget: extract resume text + categorize via Gemini (lazy-loaded)
   if (data.resumeUrl) {
     const filename = data.resumeUrl.split('/').pop() ?? '';
     const filePath = path.join(process.cwd(), 'public/uploads', filename);
-    extractAndCategorize(application.id, filePath).catch((err) =>
-      console.error('[categorization] Unexpected error:', err),
-    );
+    import('./categorization')
+      .then(({ extractAndCategorize }) => extractAndCategorize(application.id, filePath))
+      .catch((err) => console.error('[categorization] Unexpected error:', err));
   }
 
   // Fire-and-forget: email + Sheets

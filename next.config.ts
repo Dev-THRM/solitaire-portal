@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   turbopack: {},
+  serverExternalPackages: ['pdf-parse', 'pdfjs-dist'],
   experimental: {
     workerThreads: false,
     cpus: 1,
