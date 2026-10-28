@@ -44,32 +44,44 @@ export default function JobFilters() {
 
   return (
     <div style={{
-      background: 'var(--color-surface)',
-      borderRadius: 'var(--radius-xl)',
+      background: 'white',
+      borderRadius: 24,
       border: '1px solid var(--color-border)',
-      padding: 24,
-      boxShadow: 'var(--shadow-sm)',
+      padding: '28px 24px',
+      boxShadow: '0 8px 32px rgba(30,73,106,0.08)',
     }}>
       {/* Search bar */}
-      <form id="job-search-form" onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3 mb-5">
+      <form
+        id="job-search-form"
+        onSubmit={handleSearch}
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 12,
+          marginBottom: 24,
+        }}
+      >
         <input
           id="job-search-input"
           name="search"
           defaultValue={currentSearch}
           placeholder="Job title, company, keyword..."
-          className="input flex-1"
+          className="input"
+          style={{ flex: '1 1 240px', minWidth: 200 }}
         />
         <input
           id="job-location-input"
           name="location"
           defaultValue={currentLocation}
           placeholder="Location..."
-          className="input w-full sm:w-[170px]"
+          className="input"
+          style={{ flex: '0 1 180px', minWidth: 140 }}
         />
         <button
           id="job-search-btn"
           type="submit"
-          className="btn btn-primary w-full sm:w-auto"
+          className="btn btn-primary"
+          style={{ padding: '12px 28px', whiteSpace: 'nowrap', borderRadius: '9999px' }}
           disabled={isPending}
         >
           {isPending ? '...' : 'Search'}
@@ -77,7 +89,7 @@ export default function JobFilters() {
       </form>
 
       {/* Type filter pills */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, paddingTop: 4 }}>
         {JOB_TYPES.map((t) => (
           <button
             key={t.value}
@@ -85,11 +97,16 @@ export default function JobFilters() {
             onClick={() => updateParam('type', t.value)}
             className="btn btn-sm"
             style={{
+              padding: '8px 18px',
+              borderRadius: '9999px',
+              fontSize: '13px',
+              fontWeight: 500,
               background: currentType === t.value
                 ? 'var(--color-primary)'
                 : 'var(--color-surface-3)',
               color: currentType === t.value ? 'white' : 'var(--color-text-muted)',
-              boxShadow: currentType === t.value ? '0 2px 8px rgba(99,102,241,0.3)' : 'none',
+              boxShadow: currentType === t.value ? '0 2px 8px rgba(30,73,106,0.3)' : 'none',
+              transition: 'all 0.2s ease',
             }}
           >
             {t.label}

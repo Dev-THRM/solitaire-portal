@@ -131,14 +131,7 @@ export default async function JobsPage({ searchParams }: PageProps) {
 
       <div className="container" style={{ maxWidth: 1000, marginTop: -40, position: 'relative', zIndex: 10, paddingBottom: 100 }}>
         {/* Filters */}
-        <div style={{ 
-          marginBottom: 32, 
-          background: 'white', 
-          padding: 24, 
-          borderRadius: 24, 
-          boxShadow: '0 8px 32px rgba(30,73,106,0.08)',
-          border: '1px solid var(--color-border)'
-        }}>
+        <div style={{ marginBottom: 36 }}>
           <Suspense>
             <JobFilters />
           </Suspense>

@@ -414,7 +414,7 @@ function GridUnfoldStack() {
   return (
     <div style={{ width: '100%', maxWidth: '100%' }}>
       {/* Mobile view (< md): natural responsive grid without overflow */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:hidden gap-4 w-full">
+      <div className="features-mobile-grid">
         {FEATURES.map((feat, idx) => (
           <motion.div
             key={idx}
@@ -448,7 +448,7 @@ function GridUnfoldStack() {
       </div>
 
       {/* Desktop view (md+): smooth 2x2 unfolding card animation */}
-      <div className="hidden md:flex relative h-[500px] justify-center items-center w-full">
+      <div className="features-desktop-stack">
         {FEATURES.map((feat, idx) => {
           const isLeft = idx % 2 === 0;
           const isTop = idx < 2;
@@ -572,8 +572,8 @@ function AboutReveal() {
   const LINE_1 = ['We', 'place', 'exceptional'];
   const LINE_2 = ['people', 'in', 'the'];
   return (
-    <section id="about" style={{ background: 'white', overflow: 'hidden' }} className="py-24 md:py-36">
-      <div className="container" style={{ maxWidth: '1000px' }}>
+    <section id="about" className="about-reveal-section" style={{ background: 'white', overflow: 'hidden', padding: '120px 0' }}>
+      <div className="container" style={{ maxWidth: '1000px', padding: '0 24px' }}>
         <motion.div
           initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
@@ -917,24 +917,26 @@ function Testimonials() {
 
 function StickyScrollWhyUs() {
   return (
-    <section id="why-us" style={{ background: 'var(--color-primary-dark)', color: 'white', position: 'relative' }} className="py-20 md:py-32">
-      <div className="container flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
+    <section id="why-us" className="why-us-section" style={{ background: 'var(--color-primary-dark)', color: 'white', position: 'relative', padding: '120px 0' }}>
+      <div className="container why-us-container">
         {/* Left Side */}
-        <div className="w-full lg:w-[420px] lg:sticky lg:top-[120px] pb-6 lg:pb-28">
-          <div style={{ display: 'inline-block', padding: '4px 16px', background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', color: 'white', marginBottom: '24px', textTransform: 'uppercase' }}>
+        <div className="why-us-left">
+          <div style={{ display: 'inline-block', padding: '6px 18px', background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', color: 'white', marginBottom: '24px', textTransform: 'uppercase' }}>
             Why Solitaire
           </div>
-          <h2 style={{ fontSize: 'clamp(34px, 5vw, 64px)', marginBottom: '24px', letterSpacing: '-0.03em', lineHeight: 1.1 , color: '#ffffff'}}>
+          <h2 style={{ fontSize: 'clamp(34px, 5vw, 64px)', marginBottom: '24px', letterSpacing: '-0.03em', lineHeight: 1.1, color: '#ffffff' }}>
             A Higher Standard<br/>of Staffing
           </h2>
           <p style={{ fontSize: '17px', color: 'rgba(255,255,255,0.75)', marginBottom: '36px', lineHeight: 1.7, maxWidth: '480px' }}>
             We go beyond placements — we build long-term relationships based on trust, quality and understanding. Every candidate is meticulously matched to your unique lifestyle.
           </p>
-          <MagneticButton href="#contact">LEARN MORE</MagneticButton>
+          <div style={{ marginTop: '16px', marginBottom: '32px' }}>
+            <MagneticButton href="#contact">LEARN MORE</MagneticButton>
+          </div>
         </div>
         
         {/* Right Side Cards */}
-        <div className="w-full flex-1 flex items-center pb-12 lg:pb-28">
+        <div className="why-us-right">
           <GridUnfoldStack />
         </div>
       </div>
