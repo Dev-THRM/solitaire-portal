@@ -34,6 +34,7 @@ const TEAM_MEMBERS = [
   {
     name: 'Saji Thomas',
     designation: 'Chief Operating Officer',
+    image: '/images/saji-thomas.jpeg',
     bio: "As the backbone of our day-to-day execution, Saji oversees the entire recruitment, screening, and placement lifecycle. With a keen eye for detail and a commitment to excellence, he ensures that our rigorous standards are met at every step, guaranteeing seamless integration of top-tier professionals into our clients' households.",
     badge: 'Operations',
   },
