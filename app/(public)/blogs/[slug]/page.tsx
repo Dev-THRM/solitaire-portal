@@ -113,7 +113,7 @@ export default async function BlogPostDetailPage({ params }: BlogPostPageProps) 
   };
 
   return (
-    <div style={{ background: 'var(--color-surface-2)', minHeight: '100vh', paddingTop: '110px', paddingBottom: '100px' }}>
+    <div style={{ background: 'var(--color-surface-2)', minHeight: '100vh', paddingTop: '140px', paddingBottom: '100px' }}>
       {/* Inject JSON-LD Schema */}
       <script
         type="application/ld+json"

@@ -48,12 +48,12 @@ export default function AdminJobsPage() {
 
   return (
     <div style={{ maxWidth: 1000 }}>
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16, marginBottom: 36 }}>
         <div>
-          <h1 style={{ fontSize: 'clamp(24px, 4vw, 32px)', marginBottom: 6, color: 'var(--color-primary)' }}>Manage Jobs</h1>
-          <p style={{ color: 'var(--color-text-muted)', fontSize: 15 }}>{jobs.length} active listings on your portal</p>
+          <h1 style={{ fontSize: 'clamp(24px, 4vw, 32px)', fontWeight: 800, marginBottom: 6, color: 'var(--color-primary-dark)' }}>Manage Jobs</h1>
+          <p style={{ color: 'var(--color-text-muted)', fontSize: 15, margin: 0 }}>{jobs.length} active listings on your portal</p>
         </div>
-        <Link href="/admin/jobs/new" id="admin-new-job-btn" className="btn btn-primary" style={{ borderRadius: 12, padding: '12px 24px', boxShadow: '0 10px 25px rgba(30,73,106,0.2)' }}>
+        <Link href="/admin/jobs/new" id="admin-new-job-btn" className="btn btn-primary" style={{ borderRadius: 12, padding: '12px 24px', boxShadow: '0 8px 20px rgba(30,73,106,0.2)' }}>
           + Post New Job
         </Link>
       </div>

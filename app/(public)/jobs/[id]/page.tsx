@@ -58,7 +58,7 @@ export default async function JobDetailPage({ params }: PageProps) {
   return (
     <div style={{ background: 'var(--color-surface-2)', minHeight: '100vh', paddingBottom: 80 }}>
       {/* Mini Header */}
-      <div style={{ background: 'white', borderBottom: '1px solid var(--color-border)', padding: '100px 0 24px' }}>
+      <div style={{ background: 'white', borderBottom: '1px solid var(--color-border)', padding: '130px 0 24px' }}>
         <div className="container" style={{ maxWidth: 1100 }}>
           <Link href="/jobs" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--color-text-muted)', fontSize: 14, fontWeight: 500, transition: 'color 0.2s' }}>
             <ArrowLeft size={16} /> Back to All Jobs

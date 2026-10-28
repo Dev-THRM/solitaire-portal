@@ -31,7 +31,7 @@ export default async function ApplyPage({ params }: PageProps) {
   }
 
   return (
-    <div style={{ padding: '48px 0' }}>
+    <div style={{ padding: '130px 0 80px', minHeight: '100vh', background: 'var(--color-surface-2)' }}>
       <div className="container" style={{ maxWidth: 680 }}>
         {/* Breadcrumb */}
         <nav style={{ fontSize: 13, color: 'var(--color-text-muted)', marginBottom: 24 }}>
@@ -42,8 +42,8 @@ export default async function ApplyPage({ params }: PageProps) {
         </nav>
 
         {/* Job summary */}
-        <div style={{ marginBottom: 10, borderBottom: '1px solid var(--color-border)', paddingBottom: 24 }}>
-          <h1 style={{ fontSize: 32, fontWeight: 800, color: 'var(--color-text)', marginBottom: 8, marginTop: 50, letterSpacing: '-0.02em' }}>
+        <div style={{ marginBottom: 24, borderBottom: '1px solid var(--color-border)', paddingBottom: 24 }}>
+          <h1 style={{ fontSize: 32, fontWeight: 800, color: 'var(--color-primary-dark)', marginBottom: 8, marginTop: 12, letterSpacing: '-0.02em' }}>
             Apply for {job.title}
           </h1>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: 'var(--color-text-muted)', fontSize: 15, fontWeight: 500 }}>

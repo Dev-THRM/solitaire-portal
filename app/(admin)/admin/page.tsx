@@ -51,17 +51,17 @@ export default function AdminDashboard() {
   return (
     <div style={{ maxWidth: 1200 }}>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16, marginBottom: 36 }}>
         <div>
-          <h1 style={{ fontSize: 'clamp(24px, 4vw, 32px)', marginBottom: 8, color: 'var(--color-primary)' }}>
-            Welcome back, {admin?.name?.split(' ')[0] ?? 'Admin'}
+          <h1 style={{ fontSize: 'clamp(24px, 4vw, 32px)', fontWeight: 800, marginBottom: 8, color: 'var(--color-primary-dark)' }}>
+            Welcome back, {admin?.name?.split(' ')[0] ?? 'Solitaire'}
           </h1>
-          <p style={{ color: 'var(--color-text-muted)', fontSize: 15 }}>
+          <p style={{ color: 'var(--color-text-muted)', fontSize: 15, margin: 0 }}>
             Here's what's happening with solitaire job portal today.
           </p>
         </div>
         <div style={{ display: 'flex', gap: 16 }}>
-          <Link href="/admin/jobs/new" className="btn btn-primary" style={{ borderRadius: 12, padding: '12px 24px', boxShadow: '0 10px 25px rgba(30,73,106,0.2)' }}>
+          <Link href="/admin/jobs/new" className="btn btn-primary" style={{ borderRadius: 12, padding: '12px 24px', boxShadow: '0 8px 20px rgba(30,73,106,0.2)' }}>
             + Post New Job
           </Link>
         </div>

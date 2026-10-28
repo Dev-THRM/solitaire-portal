@@ -67,7 +67,7 @@ export default async function BlogsPage({ searchParams }: BlogsPageProps) {
   const gridBlogs = featuredBlog ? blogs.slice(1) : blogs;
 
   return (
-    <div style={{ background: 'var(--color-surface-2)', minHeight: '100vh', paddingTop: '120px', paddingBottom: '96px' }}>
+    <div style={{ background: 'var(--color-surface-2)', minHeight: '100vh', paddingTop: '140px', paddingBottom: '96px' }}>
       <div className="container" style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
         {/* Hero Section */}
         <div style={{ textAlign: 'center', maxWidth: 760, margin: '0 auto 48px' }}>
