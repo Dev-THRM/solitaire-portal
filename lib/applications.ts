@@ -40,8 +40,8 @@ export async function createApplication(data: CreateApplicationDto) {
   }
 
   // Fire-and-forget: email + Sheets
-  const appliedAt = new Date().toLocaleString('en-IN', {
-    timeZone: 'Asia/Kolkata',
+  const appliedAt = new Date().toLocaleString('en-AE', {
+    timeZone: 'Asia/Dubai',
     dateStyle: 'medium',
     timeStyle: 'short',
   });

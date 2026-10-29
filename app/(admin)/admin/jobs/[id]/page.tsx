@@ -94,7 +94,7 @@ export default function EditJobPage() {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               <label htmlFor="edit-location" style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-text)', display: 'flex', alignItems: 'center', gap: 6 }}><MapPin size={16} color="var(--color-text-muted)" /> Location *</label>
-              <input id="edit-location" value={form.location ?? ''} onChange={(e) => set('location', e.target.value)} required style={{ width: '100%', padding: '12px 16px', borderRadius: 12, border: '1px solid var(--color-border)', outline: 'none', fontSize: 15 }} />
+              <input id="edit-location" value={form.location ?? ''} onChange={(e) => set('location', e.target.value)} placeholder="e.g. Dubai, UAE / Palm Jumeirah" required style={{ width: '100%', padding: '12px 16px', borderRadius: 12, border: '1px solid var(--color-border)', outline: 'none', fontSize: 15 }} />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               <label htmlFor="edit-type" style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-text)', display: 'flex', alignItems: 'center', gap: 6 }}><Building2 size={16} color="var(--color-text-muted)" /> Job Type *</label>
@@ -120,11 +120,11 @@ export default function EditJobPage() {
               </div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <label style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-text)', display: 'flex', alignItems: 'center', gap: 6 }}><DollarSign size={16} color="var(--color-text-muted)" /> Salary Range (₹ LPA)</label>
+              <label style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-text)', display: 'flex', alignItems: 'center', gap: 6 }}><DollarSign size={16} color="var(--color-text-muted)" /> Salary Range (AED)</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <input type="number" value={form.salaryMin ?? ''} onChange={(e) => set('salaryMin', e.target.value)} placeholder="Min" style={{ width: '100%', padding: '12px 16px', borderRadius: 12, border: '1px solid var(--color-border)', outline: 'none', fontSize: 15 }} />
+                <input type="number" value={form.salaryMin ?? ''} onChange={(e) => set('salaryMin', e.target.value)} placeholder="Min (AED)" style={{ width: '100%', padding: '12px 16px', borderRadius: 12, border: '1px solid var(--color-border)', outline: 'none', fontSize: 15 }} />
                 <span style={{ color: 'var(--color-text-muted)' }}>to</span>
-                <input type="number" value={form.salaryMax ?? ''} onChange={(e) => set('salaryMax', e.target.value)} placeholder="Max" style={{ width: '100%', padding: '12px 16px', borderRadius: 12, border: '1px solid var(--color-border)', outline: 'none', fontSize: 15 }} />
+                <input type="number" value={form.salaryMax ?? ''} onChange={(e) => set('salaryMax', e.target.value)} placeholder="Max (AED)" style={{ width: '100%', padding: '12px 16px', borderRadius: 12, border: '1px solid var(--color-border)', outline: 'none', fontSize: 15 }} />
               </div>
             </div>
           </div>

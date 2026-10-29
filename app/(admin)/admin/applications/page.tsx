@@ -582,7 +582,7 @@ function ApplicationsPageContent() {
                                 )}
                                 {app.expectedCtc && (
                                   <span style={{ fontSize: 11, color: '#047857', background: '#d1fae5', padding: '2px 8px', borderRadius: 6, fontWeight: 500, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                                    Exp: {app.expectedCtc}
+                                    Expected: {app.expectedCtc}
                                   </span>
                                 )}
                               </div>
@@ -646,7 +646,7 @@ function ApplicationsPageContent() {
                                           {app.currentCtc && (
                                             <div style={{ background: 'white', padding: '10px 12px', borderRadius: 10, border: '1px solid var(--color-border)' }}>
                                               <span style={{ fontSize: 11, color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: 5, fontWeight: 500 }}>
-                                                <Banknote size={12} /> Current CTC
+                                                <Banknote size={12} /> Current Salary
                                               </span>
                                               <span style={{ fontWeight: 700, fontSize: 13, color: 'var(--color-text)', marginTop: 4, display: 'block' }}>{app.currentCtc}</span>
                                             </div>
@@ -654,7 +654,7 @@ function ApplicationsPageContent() {
                                           {app.expectedCtc && (
                                             <div style={{ background: 'white', padding: '10px 12px', borderRadius: 10, border: '1px solid var(--color-border)' }}>
                                               <span style={{ fontSize: 11, color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: 5, fontWeight: 500 }}>
-                                                <Banknote size={12} /> Expected CTC
+                                                <Banknote size={12} /> Expected Salary
                                               </span>
                                               <span style={{ fontWeight: 700, fontSize: 13, color: 'var(--color-primary)', marginTop: 4, display: 'block' }}>{app.expectedCtc}</span>
                                             </div>

@@ -86,8 +86,8 @@ export async function sendApplicationEmail(data: ApplicationEmailData): Promise<
           <div class="field">
             <div class="label">Compensation & Availability</div>
             <div class="value">
-              ${data.currentCtc ? `<strong>Current CTC:</strong> ${data.currentCtc}<br>` : ''}
-              ${data.expectedCtc ? `<strong>Expected CTC:</strong> ${data.expectedCtc}<br>` : ''}
+              ${data.currentCtc ? `<strong>Current Salary:</strong> ${data.currentCtc}<br>` : ''}
+              ${data.expectedCtc ? `<strong>Expected Salary:</strong> ${data.expectedCtc}<br>` : ''}
               ${data.noticePeriod ? `<strong>Notice Period:</strong> ${data.noticePeriod}` : ''}
             </div>
           </div>` : ''}

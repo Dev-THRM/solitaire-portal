@@ -26,7 +26,7 @@ const ApplicationSchema = z.object({
       const digits = clean.replace(/\D/g, '');
       return digits.length === 10 || digits.length === 9;
     },
-    { message: 'Phone must be exactly 10 digits for India or 9 digits for Dubai' }
+    { message: 'Phone must be exactly 9 digits for Dubai / UAE or 10 digits for India' }
   ),
   currentCtc: z.string().optional(),
   expectedCtc: z.string().optional(),

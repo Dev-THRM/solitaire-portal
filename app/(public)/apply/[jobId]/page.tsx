@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getJob } from '../../../_lib/api';
+import { getJobById } from '@/lib/jobs';
 import ApplicationForm from '../../../_components/ApplicationForm';
+
+export const dynamic = 'force-dynamic';
 
 interface PageProps {
   params: Promise<{ jobId: string }>;
@@ -11,7 +13,8 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   try {
     const { jobId } = await params;
-    const { data: job } = await getJob(jobId);
+    const job = await getJobById(jobId);
+    if (!job) return { title: 'Apply' };
     return { title: `Apply — ${job.title} at ${job.company}` };
   } catch {
     return { title: 'Apply' };
@@ -23,9 +26,8 @@ export default async function ApplyPage({ params }: PageProps) {
 
   let job;
   try {
-    const res = await getJob(jobId);
-    job = res.data;
-    if (!job.isActive) notFound();
+    job = await getJobById(jobId);
+    if (!job || !job.isActive) notFound();
   } catch {
     notFound();
   }
@@ -50,10 +52,10 @@ export default async function ApplyPage({ params }: PageProps) {
             <span>{job.company || 'Solitaire Human Resources'}</span>
             <span style={{ color: 'var(--color-border)' }}>|</span>
             <span>{job.location}</span>
-            {job.salary && (
+            {job.salaryMin != null && job.salaryMax != null && (
               <>
                 <span style={{ color: 'var(--color-border)' }}>|</span>
-                <span>{job.salary}</span>
+                <span>AED {job.salaryMin.toLocaleString('en-AE')} - AED {job.salaryMax.toLocaleString('en-AE')}</span>
               </>
             )}
           </div>

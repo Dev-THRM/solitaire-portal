@@ -48,16 +48,16 @@ export default function ApplicationForm({ jobId, jobTitle }: ApplicationFormProp
       e.phone = 'Phone number is required';
     } else if (countryCode === '+91') {
       if (digits.length !== 10) {
-        e.phone = 'India phone number must be exactly 10 digits';
+        e.phone = 'Phone number must be exactly 10 digits';
       }
     } else if (countryCode === '+971') {
       if (digits.length !== 9) {
-        e.phone = 'Dubai phone number must be exactly 9 digits (e.g. 501234567)';
+        e.phone = 'Dubai / UAE phone number must be exactly 9 digits (e.g. 501234567)';
       }
     }
 
-    if (!form.currentCtc.trim()) e.currentCtc = 'Current CTC is required (or enter N/A)';
-    if (!form.expectedCtc.trim()) e.expectedCtc = 'Expected CTC is required';
+    if (!form.currentCtc.trim()) e.currentCtc = 'Current salary is required (or enter N/A)';
+    if (!form.expectedCtc.trim()) e.expectedCtc = 'Expected salary is required';
     if (!form.noticePeriod.trim()) e.noticePeriod = 'Notice period is required';
     if (!form.resumeFile) {
       e.resumeFile = 'Resume document is required';
@@ -290,7 +290,7 @@ export default function ApplicationForm({ jobId, jobTitle }: ApplicationFormProp
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
         <div className="form-group">
           <label htmlFor="app-currentCtc" className="form-label" style={{ fontWeight: 600 }}>
-            Current CTC <span style={{color: '#ef4444'}}>*</span>
+            Current Salary (AED) <span style={{color: '#ef4444'}}>*</span>
           </label>
           <div style={{ position: 'relative' }}>
             <div style={{ position: 'absolute', left: 16, top: 12, color: 'var(--color-text-muted)' }}><Banknote size={18} /></div>
@@ -300,14 +300,14 @@ export default function ApplicationForm({ jobId, jobTitle }: ApplicationFormProp
               style={{ paddingLeft: 44, borderRadius: 12, background: 'var(--color-surface-2)', borderColor: errors.currentCtc ? '#ef4444' : undefined }}
               value={form.currentCtc}
               onChange={(e) => setForm({ ...form, currentCtc: e.target.value })}
-              placeholder="e.g. AED 12,000 / mo or ₹10 LPA"
+              placeholder="e.g. AED 12,000 / month (or N/A)"
             />
           </div>
           {errors.currentCtc && <span className="form-error" style={{ color: '#ef4444', fontSize: 13, marginTop: 6, display: 'block' }}>{errors.currentCtc}</span>}
         </div>
         <div className="form-group">
           <label htmlFor="app-expectedCtc" className="form-label" style={{ fontWeight: 600 }}>
-            Expected CTC <span style={{color: '#ef4444'}}>*</span>
+            Expected Salary (AED) <span style={{color: '#ef4444'}}>*</span>
           </label>
           <div style={{ position: 'relative' }}>
             <div style={{ position: 'absolute', left: 16, top: 12, color: 'var(--color-text-muted)' }}><Banknote size={18} /></div>
@@ -317,7 +317,7 @@ export default function ApplicationForm({ jobId, jobTitle }: ApplicationFormProp
               style={{ paddingLeft: 44, borderRadius: 12, background: 'var(--color-surface-2)', borderColor: errors.expectedCtc ? '#ef4444' : undefined }}
               value={form.expectedCtc}
               onChange={(e) => setForm({ ...form, expectedCtc: e.target.value })}
-              placeholder="e.g. AED 15,000 / mo or ₹14 LPA"
+              placeholder="e.g. AED 15,000 / month"
             />
           </div>
           {errors.expectedCtc && <span className="form-error" style={{ color: '#ef4444', fontSize: 13, marginTop: 6, display: 'block' }}>{errors.expectedCtc}</span>}

@@ -73,7 +73,7 @@ export default function JobFilters() {
           id="job-location-input"
           name="location"
           defaultValue={currentLocation}
-          placeholder="Location..."
+          placeholder="Location (e.g. Dubai)..."
           className="input"
           style={{ flex: '0 1 180px', minWidth: 140 }}
         />

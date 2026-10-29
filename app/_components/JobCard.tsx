@@ -75,7 +75,7 @@ export default function JobCard({ job }: JobCardProps) {
                   <Clock size={13} /> {job.experienceMin != null && job.experienceMax != null ? `${job.experienceMin}-${job.experienceMax} Yrs` : 'Experience Not Specified'}
                 </span>
                 <span style={{ fontSize: 12, color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
-                  <DollarSign size={13} /> {job.salaryMin != null && job.salaryMax != null ? `AED ${job.salaryMin.toLocaleString('en-IN')} - AED ${job.salaryMax.toLocaleString('en-IN')}` : 'Competitive'}
+                  <DollarSign size={13} /> {job.salaryMin != null && job.salaryMax != null ? `AED ${job.salaryMin.toLocaleString('en-AE')} - AED ${job.salaryMax.toLocaleString('en-AE')}` : 'Competitive'}
                 </span>
               </div>
             </div>
@@ -116,7 +116,7 @@ export default function JobCard({ job }: JobCardProps) {
         }}>
           <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
             <span style={{ fontSize: 12, color: 'var(--color-text-subtle)', fontWeight: 500 }}>
-              Posted {new Date(job.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+              Posted {new Date(job.createdAt).toLocaleDateString('en-AE', { day: 'numeric', month: 'short', year: 'numeric' })}
             </span>
             {job._count && job._count.applications > 0 && (
               <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--color-primary)', fontWeight: 600, background: 'var(--color-primary-light)', padding: '4px 8px', borderRadius: 8 }}>
