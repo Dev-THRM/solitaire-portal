@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import { requireAdmin } from '@/lib/auth';
+import { getUploadDir } from '@/lib/uploadPath';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -33,14 +34,24 @@ export async function POST(request: Request) {
     }
 
     const filename = `blog-${uuidv4()}${ext}`;
-    const uploadDir = path.join(process.cwd(), 'public/uploads/blogs');
+    const uploadDir = path.join(getUploadDir(), 'blogs');
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
 
     const filePath = path.join(uploadDir, filename);
     const bytes = await imageFile.arrayBuffer();
-    await fs.promises.writeFile(filePath, Buffer.from(bytes));
+    const buffer = Buffer.from(bytes);
+    await fs.promises.writeFile(filePath, buffer);
+
+    // Also mirror to local public/uploads/blogs if different
+    const localBlogsDir = path.join(process.cwd(), 'public', 'uploads', 'blogs');
+    if (uploadDir !== localBlogsDir) {
+      try {
+        if (!fs.existsSync(localBlogsDir)) fs.mkdirSync(localBlogsDir, { recursive: true });
+        await fs.promises.writeFile(path.join(localBlogsDir, filename), buffer);
+      } catch {}
+    }
 
     const imageUrl = `/uploads/blogs/${filename}`;
     return NextResponse.json({ success: true, url: imageUrl });

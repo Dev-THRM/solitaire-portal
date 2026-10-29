@@ -4,6 +4,7 @@ import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { createApplication } from '@/lib/applications';
+import { getUploadDir } from '@/lib/uploadPath';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -58,15 +59,22 @@ export async function POST(request: Request) {
       }, { status: 400 });
     }
 
-    // Save file to public/uploads
+    // Save file to persistent upload directory (respects UPLOADS_DIR env var)
     const filename = `${uuidv4()}${ext}`;
-    const uploadDir = path.join(process.cwd(), 'public/uploads');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
+    const uploadDir = getUploadDir();
     const filePath = path.join(uploadDir, filename);
     const bytes = await resumeFile.arrayBuffer();
-    await fs.promises.writeFile(filePath, Buffer.from(bytes));
+    const buffer = Buffer.from(bytes);
+    await fs.promises.writeFile(filePath, buffer);
+
+    // Also mirror to local public/uploads if different
+    const localUploadsDir = path.join(process.cwd(), 'public', 'uploads');
+    if (uploadDir !== localUploadsDir) {
+      try {
+        if (!fs.existsSync(localUploadsDir)) fs.mkdirSync(localUploadsDir, { recursive: true });
+        await fs.promises.writeFile(path.join(localUploadsDir, filename), buffer);
+      } catch {}
+    }
 
     const rawData: Record<string, any> = {};
     formData.forEach((value, key) => {

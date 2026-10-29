@@ -4,6 +4,7 @@ import prisma from './prisma';
 // so route handlers like /api/apply/admin (listing applications) do not load pdf-parse or pdfjs-dist at module startup.
 import { sendApplicationEmail, sendConfirmationEmail, sendStatusUpdateEmail } from './email';
 import { appendApplicationToSheet } from './sheets';
+import { resolveUploadedFilePath } from './uploadPath';
 
 export interface CreateApplicationDto {
   jobId: string;
@@ -33,7 +34,7 @@ export async function createApplication(data: CreateApplicationDto) {
   // Fire-and-forget: extract resume text + categorize via Gemini (lazy-loaded)
   if (data.resumeUrl) {
     const filename = data.resumeUrl.split('/').pop() ?? '';
-    const filePath = path.join(process.cwd(), 'public/uploads', filename);
+    const filePath = resolveUploadedFilePath(filename);
     import('./categorization')
       .then(({ extractAndCategorize }) => extractAndCategorize(application.id, filePath))
       .catch((err) => console.error('[categorization] Unexpected error:', err));

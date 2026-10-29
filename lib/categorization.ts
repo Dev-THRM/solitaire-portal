@@ -1,8 +1,11 @@
+import path from 'path';
+import fs from 'fs';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { z } from 'zod';
 import prisma from './prisma';
 import { extractText, cleanText, parseSections } from './extraction';
 import { buildPrompt, type GeminiCategoryResult } from './prompts/categorize-resume';
+import { resolveUploadedFilePath } from './uploadPath';
 
 function getGeminiClient() {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -36,7 +39,13 @@ export async function extractAndCategorize(
 
   let rawText = '';
   try {
-    rawText = await extractText(filePath);
+    const resolvedPath = resolveUploadedFilePath(filePath);
+    if (!fs.existsSync(resolvedPath)) {
+      const filename = path.basename(filePath);
+      throw new Error(`Resume file "${filename}" was not found on the server. Please re-upload the applicant's resume.`);
+    }
+
+    rawText = await extractText(resolvedPath);
     const cleaned = cleanText(rawText);
     const sections = parseSections(cleaned);
 

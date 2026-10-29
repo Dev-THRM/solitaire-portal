@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import path from 'path';
 import { requireAdmin } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { categorizeResume, extractAndCategorize } from '@/lib/categorization';
+import { resolveUploadedFilePath } from '@/lib/uploadPath';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -34,7 +34,7 @@ export async function POST(
     // If never extracted or extraction failed, run full pipeline
     if (!resume || resume.extractionStatus !== 'DONE' || !resume.rawText) {
       const filename = application.resumeUrl.split('/').pop() ?? '';
-      const filePath = path.join(process.cwd(), 'public/uploads', filename);
+      const filePath = resolveUploadedFilePath(filename);
 
       if (resume) {
         await prisma.resume.update({

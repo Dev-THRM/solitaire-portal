@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import path from 'path';
 import fs from 'fs';
+import { resolveUploadedFilePath } from '@/lib/uploadPath';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -34,7 +35,8 @@ export async function GET(
       }
     }
 
-    const filePath = path.join(process.cwd(), 'public/uploads', ...segments);
+    const relPath = segments.join('/');
+    const filePath = resolveUploadedFilePath(relPath);
 
     if (!fs.existsSync(filePath)) {
       return new NextResponse('File not found', { status: 404 });
