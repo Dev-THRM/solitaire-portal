@@ -116,7 +116,7 @@ async function extractFromImage(filePath: string): Promise<string> {
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  const modelName = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
+  const modelName = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
   const model = genAI.getGenerativeModel({ model: modelName });
 
   const fileBuffer = await fs.promises.readFile(filePath);
