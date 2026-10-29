@@ -52,10 +52,10 @@ const VIDEOS = [
   { src: '/images/6949138-hd_1920_1080_25fps.mp4', label: 'Nanny', credit: 'Solitaire' },
   { src: '/images/19376557-hd_1920_1080_25fps.mp4', label: 'Sahara Desert', credit: 'Solitaire' },
   { src: '/images/7608903-uhd_3840_2160_25fps.mp4', label: 'Butler', credit: 'Solitaire' },
-  { src: '/images/3864917-uhd_2560_1440_30fps.mp4', label: 'Dubai Frame', credit: 'Solitaire' },
+  { src: '/hero_videos/3864917-uhd_2560_1440_30fps.mp4', label: 'Dubai Frame', credit: 'Solitaire' },
   { src: '/images/8344927-uhd_3840_2160_25fps.mp4', label: 'Chauffeur', credit: 'Solitaire' },
   { src: '/images/7848927-uhd_3840_2160_25fps.mp4', label: 'Jumeirah Burj Al Arab', credit: 'Solitaire' },
-];
+];  
 
 const SERVICES = [
   { icon: <Home size={32} strokeWidth={1.5} color="var(--color-primary)" />, title: 'House Manager', desc: 'Seamless household management for a stress-free lifestyle.' },
