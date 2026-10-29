@@ -113,13 +113,26 @@ function CategoriesPanel({ app, onAppUpdate }: { app: Application; onAppUpdate?:
 
   useEffect(() => { load(); }, [load]);
 
-  // Poll while processing
+  // Poll while processing with a safeguard limit
   useEffect(() => {
-    if (resumeStatus?.categorizationStatus === 'PROCESSING' || resumeStatus?.extractionStatus === 'PENDING') {
-      const interval = setInterval(load, 3000);
-      return () => clearInterval(interval);
-    }
-  }, [resumeStatus, load]);
+    const isProcessing =
+      resumeStatus?.categorizationStatus === 'PROCESSING' ||
+      resumeStatus?.extractionStatus === 'PENDING';
+
+    if (!isProcessing) return;
+
+    let count = 0;
+    const interval = setInterval(() => {
+      count++;
+      if (count > 10) {
+        clearInterval(interval);
+        return;
+      }
+      load();
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [resumeStatus?.categorizationStatus, resumeStatus?.extractionStatus, load]);
 
   async function handleTrigger() {
     const token = getToken()!;
@@ -127,10 +140,13 @@ function CategoriesPanel({ app, onAppUpdate }: { app: Application; onAppUpdate?:
     try {
       const res = await adminTriggerCategorization(token, app.id);
       setTriggerMsg(res.message);
-      setTimeout(load, 3000);
+      await load();
     } catch (err: any) {
       setTriggerMsg(err.message ?? 'Failed to trigger');
-    } finally { setTriggering(false); }
+    } finally {
+      setTriggering(false);
+      await load();
+    }
   }
 
   async function handleRemove(categoryId: string) {

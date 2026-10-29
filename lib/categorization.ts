@@ -155,38 +155,53 @@ export async function categorizeResume(resumeId: string): Promise<void> {
 
 async function callGeminiWithRetry(
   prompt: string,
-  maxRetries = 3,
+  maxRetries = 2,
 ): Promise<string> {
   const genAI = getGeminiClient();
-  const modelName = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
-  const model = genAI.getGenerativeModel({ model: modelName });
+
+  const modelsToTry = Array.from(new Set([
+    process.env.GEMINI_MODEL,
+    'gemini-3.7-flash',
+    'gemini-3.5-flash',
+    'gemini-3.8-flash',
+  ].filter(Boolean) as string[]));
 
   let lastError: Error | null = null;
 
-  for (let attempt = 0; attempt <= maxRetries; attempt++) {
-    try {
-      const result = await model.generateContent(prompt);
-      const text = result.response.text();
-      return text;
-    } catch (err: any) {
-      lastError = err instanceof Error ? err : new Error(String(err));
-      const isRetryable =
-        err?.status === 429 ||
-        (typeof err?.status === 'number' && err.status >= 500);
+  for (const modelName of modelsToTry) {
+    const model = genAI.getGenerativeModel({ model: modelName });
 
-      if (!isRetryable || attempt === maxRetries) {
-        throw lastError;
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        const result = await model.generateContent(prompt);
+        const text = result.response.text();
+        return text;
+      } catch (err: any) {
+        lastError = err instanceof Error ? err : new Error(String(err));
+        const status = err?.status;
+        console.warn(
+          `[gemini] Model ${modelName} (attempt ${attempt + 1}) error: ${err?.message?.split('\n')[0]}`,
+        );
+
+        // If high demand (503) or not found (404), immediately fall back to next model
+        if (status === 503 || status === 404) {
+          break;
+        }
+
+        const isRetryable =
+          status === 429 || (typeof status === 'number' && status >= 500);
+
+        if (!isRetryable || attempt === maxRetries) {
+          break;
+        }
+
+        const delayMs = Math.min(1000 * Math.pow(2, attempt), 4000);
+        await sleep(delayMs);
       }
-
-      const delayMs = Math.min(1000 * Math.pow(2, attempt), 16000);
-      console.warn(
-        `[gemini] Rate limit / server error (attempt ${attempt + 1}). Retrying in ${delayMs}ms...`,
-      );
-      await sleep(delayMs);
     }
   }
 
-  throw lastError ?? new Error('Gemini call failed after max retries');
+  throw lastError ?? new Error('All Gemini candidate models failed to generate content');
 }
 
 export function parseGeminiResponse(raw: string): GeminiCategoryResult[] {

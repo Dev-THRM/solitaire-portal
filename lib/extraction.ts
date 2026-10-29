@@ -116,23 +116,40 @@ async function extractFromImage(filePath: string): Promise<string> {
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  const modelName = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
-  const model = genAI.getGenerativeModel({ model: modelName });
-
   const fileBuffer = await fs.promises.readFile(filePath);
   const base64Data = fileBuffer.toString('base64');
+  const prompt =
+    'Extract all readable text verbatim from this resume/CV image. Retain structure, headings, dates, experience details, and contact information. Output only the plain extracted text without any conversational preamble or markdown formatting.';
 
-  const result = await model.generateContent([
-    {
-      inlineData: {
-        data: base64Data,
-        mimeType,
-      },
-    },
-    'Extract all readable text verbatim from this resume/CV image. Retain structure, headings, dates, experience details, and contact information. Output only the plain extracted text without any conversational preamble or markdown formatting.',
-  ]);
+  const modelsToTry = Array.from(new Set([
+    process.env.GEMINI_MODEL,
+    'gemini-3.7-flash',
+    'gemini-3.5-flash',
+    'gemini-3.8-flash',
+  ].filter(Boolean) as string[]));
 
-  return result.response.text();
+  let lastError: Error | null = null;
+  for (const modelName of modelsToTry) {
+    try {
+      const model = genAI.getGenerativeModel({ model: modelName });
+      const result = await model.generateContent([
+        {
+          inlineData: {
+            data: base64Data,
+            mimeType,
+          },
+        },
+        prompt,
+      ]);
+      return result.response.text();
+    } catch (err: any) {
+      lastError = err instanceof Error ? err : new Error(String(err));
+      console.warn(`[extraction] Model ${modelName} failed:`, err?.message?.split('\n')[0]);
+      if (err?.status === 503 || err?.status === 404) continue;
+    }
+  }
+
+  throw lastError ?? new Error('All Gemini candidate models failed to extract image text');
 }
 
 // ── Text Cleaning ─────────────────────────────────────────────────────────────

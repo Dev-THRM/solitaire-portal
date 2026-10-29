@@ -48,24 +48,20 @@ export async function POST(
         });
       }
 
-      extractAndCategorize(applicationId, filePath).catch((err) =>
-        console.error('[extraction] Triggered re-run error:', err),
-      );
+      await extractAndCategorize(applicationId, filePath);
 
       return NextResponse.json({
         success: true,
-        message: 'Re-extraction and categorization started. Check back in a few seconds.',
+        message: 'Extraction and categorization completed successfully.',
       });
     }
 
     // Extraction already done — just re-run categorization
-    categorizeResume(resume.id).catch((err) =>
-      console.error('[categorization] Triggered re-run error:', err),
-    );
+    await categorizeResume(resume.id);
 
     return NextResponse.json({
       success: true,
-      message: 'Categorization started. Check back in a few seconds.',
+      message: 'Categorization completed successfully.',
     });
   } catch (err) {
     console.error('[admin/applications/[id]/categorize/POST] Error:', err);
