@@ -336,6 +336,18 @@ a:hover { color: var(--color-primary-dark); }
 }
 
 /* ── Navbar Desktop vs Mobile Visibility ──────────────────────────────────── */
+.nav-logo {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+@media (min-width: 768px) {
+  .nav-logo {
+    height: 56px;
+  }
+}
+
 @media (max-width: 767px) {
   .nav-desktop-only {
     display: none !important;

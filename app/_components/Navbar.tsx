@@ -79,8 +79,7 @@ export default function Navbar() {
           <img 
             src="/images/logo.png" 
             alt="Solitaire" 
-            style={{ height: '44px', objectFit: 'contain' }} 
-            className="h-[42px] md:h-[54px]"
+            className="nav-logo"
           />
         </Link>
 
