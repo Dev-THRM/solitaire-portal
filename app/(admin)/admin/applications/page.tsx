@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, Suspense, Fragment } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   adminGetApplications,
+  adminGetApplicationsWithCategories,
   adminGetResumeStatus,
   adminGetApplicationCategories,
   adminTriggerCategorization,
@@ -14,6 +15,7 @@ import {
   adminGetJobs,
   type Job,
   type Application,
+  type ApplicationWithCategories,
   type CandidateCategory,
   type ResumeStatus,
   type Category,
@@ -22,7 +24,8 @@ import { getToken } from '../../../_lib/auth';
 import {
   Mail, Phone, FileText, CheckCircle2, Clock, Eye, XCircle, Search,
   User, Folder, ArrowRightLeft, PauseCircle, RefreshCw, Sparkles,
-  Plus, Trash2, AlertCircle, ChevronRight, Brain, ChevronDown, Banknote,
+  Plus, Trash2, AlertCircle, ChevronRight, ChevronLeft, Brain, ChevronDown, Banknote,
+  Download, Tag,
 } from 'lucide-react';
 
 const STATUS_CONFIG: Record<string, any> = {
@@ -416,18 +419,42 @@ function CategoriesPanel({ app, onAppUpdate }: { app: Application; onAppUpdate?:
   );
 }
 
+// ── Pagination helper ──────────────────────────────────────────────────────────
+function getPageNumbers(current: number, total: number): (number | '...')[] {
+  if (total <= 7) {
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+  if (current <= 4) {
+    return [1, 2, 3, 4, 5, '...', total];
+  }
+  if (current >= total - 3) {
+    return [1, '...', total - 4, total - 3, total - 2, total - 1, total];
+  }
+  return [1, '...', current - 1, current, current + 1, '...', total];
+}
+
 // ── Main page ─────────────────────────────────────────────────────────────────
+
+const PAGE_SIZE = 10;
 
 function ApplicationsPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const jobId = searchParams.get('jobId') ?? undefined;
 
-  const [applications, setApplications] = useState<Application[]>([]);
+  // Applications with their category assignments (for the category filter)
+  const [appsWithCats, setAppsWithCats] = useState<ApplicationWithCategories[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Application | null>(null);
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [statusFilter, setStatusFilter] = useState('ALL');
+
+  // Category filter
+  const [categoryFilter, setCategoryFilter] = useState<string | null>(null); // categoryId or null
+  const [downloading, setDownloading] = useState(false);
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [showSwitchModal, setShowSwitchModal] = useState<string | null>(null);
   const [activeJobs, setActiveJobs] = useState<Job[]>([]);
@@ -437,14 +464,22 @@ function ApplicationsPageContent() {
     const token = getToken();
     if (!token) { router.push('/login'); return; }
 
-    adminGetApplications(token, jobId)
-      .then((res) => setApplications(res.data))
+    adminGetApplicationsWithCategories(token, jobId)
+      .then((res) => setAppsWithCats(res.data))
       .catch(() => router.push('/login'))
       .finally(() => setLoading(false));
   }, [jobId, router]);
 
+  // Reset to first page whenever filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [statusFilter, categoryFilter]);
+
+  // Derive the plain Application list (without categories) from appsWithCats
+  const applications: Application[] = appsWithCats;
+
   function handleAppUpdate(updatedApp: Application) {
-    setApplications((prev) => prev.map((a) => (a.id === updatedApp.id ? updatedApp : a)));
+    setAppsWithCats((prev) => prev.map((a) => (a.id === updatedApp.id ? { ...a, ...updatedApp } : a)));
     setSelected((prev) => (prev?.id === updatedApp.id ? updatedApp : prev));
   }
 
@@ -469,25 +504,100 @@ function ApplicationsPageContent() {
         body: JSON.stringify({ status, jobId: targetJobId }),
       });
       if (res.ok) {
-        setApplications((prev) => prev.map((a) => a.id === appId ? { ...a, status: status as Application['status'] } : a));
+        setAppsWithCats((prev) => prev.map((a) => a.id === appId ? { ...a, status: status as Application['status'] } : a));
         setSelected((prev) => prev?.id === appId ? { ...prev, status: status as Application['status'] } : prev);
-        
+
         if (targetJobId && jobId) {
-          setApplications(prev => prev.filter(a => a.id !== appId));
+          setAppsWithCats(prev => prev.filter(a => a.id !== appId));
           if (selected?.id === appId) setSelected(null);
         } else if (targetJobId) {
-          // If viewing all, just reload to get the new job title
-          adminGetApplications(token).then((res) => setApplications(res.data));
+          const token2 = getToken()!;
+          adminGetApplicationsWithCategories(token2).then((res) => setAppsWithCats(res.data));
         }
       }
-    } finally { 
+    } finally {
       setUpdatingStatus(false);
       setShowSwitchModal(null);
       setSelectedJobId('');
     }
   }
 
-  const filtered = statusFilter === 'ALL' ? applications : applications.filter((a) => a.status === statusFilter);
+  // Derive all unique categories across all loaded applications
+  const allCategoriesMap = new Map<string, { id: string; name: string; count: number }>();
+  for (const app of appsWithCats) {
+    for (const cc of app.categories ?? []) {
+      const existing = allCategoriesMap.get(cc.categoryId);
+      if (existing) {
+        existing.count++;
+      } else {
+        allCategoriesMap.set(cc.categoryId, { id: cc.categoryId, name: cc.category.name, count: 1 });
+      }
+    }
+  }
+  const availableCategories = Array.from(allCategoriesMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+
+  // Apply filters
+  const statusFiltered = statusFilter === 'ALL' ? appsWithCats : appsWithCats.filter((a) => a.status === statusFilter);
+  const filtered = categoryFilter
+    ? statusFiltered.filter((a) => (a.categories ?? []).some((cc) => cc.categoryId === categoryFilter))
+    : statusFiltered;
+
+  const activeCategoryName = categoryFilter
+    ? allCategoriesMap.get(categoryFilter)?.name ?? categoryFilter
+    : null;
+
+  // Pagination calculations
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const validCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
+  const startIndex = (validCurrentPage - 1) * PAGE_SIZE;
+  const endIndex = Math.min(startIndex + PAGE_SIZE, filtered.length);
+  const paginatedApps = filtered.slice(startIndex, endIndex);
+
+  async function handleDownload() {
+    if (paginatedApps.length === 0) return;
+    setDownloading(true);
+    try {
+      const token = getToken()!;
+      const pageAppIds = paginatedApps.map((a) => a.id);
+      const label = activeCategoryName
+        ? `${activeCategoryName}_Page_${validCurrentPage}`
+        : `Applications_Page_${validCurrentPage}`;
+
+      const res = await fetch('/api/admin/applications/download', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          applicationIds: pageAppIds,
+          label,
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: 'Download failed' }));
+        alert(err.error ?? 'Download failed');
+        return;
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      const disposition = res.headers.get('Content-Disposition') ?? '';
+      const filenameMatch = disposition.match(/filename="([^"]+)"/);
+      a.download = filenameMatch?.[1] ?? `${label}_applicants.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('[download]', err);
+      alert('Failed to download. Please try again.');
+    } finally {
+      setDownloading(false);
+    }
+  }
 
   if (loading) return (
     <div style={{ display: 'flex', gap: 24, maxWidth: 1200 }}>
@@ -499,18 +609,44 @@ function ApplicationsPageContent() {
 
   return (
     <div style={{ maxWidth: 1200 }}>
-      <div style={{ marginBottom: 32, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+      <div style={{ marginBottom: 32, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 12 }}>
         <div>
           <h1 style={{ fontSize: 32, marginBottom: 8, color: 'var(--color-primary)' }}>Applications</h1>
           <p style={{ color: 'var(--color-text-muted)', fontSize: 16 }}>
             {filtered.length} application{filtered.length !== 1 ? 's' : ''}
-            {jobId ? ` for selected job` : ' total'}
+            {activeCategoryName ? ` in "${activeCategoryName}"` : jobId ? ` for selected job` : ' total'}
+            {totalPages > 1 && ` • Page ${validCurrentPage} of ${totalPages}`}
           </p>
         </div>
+
+        {/* Download button — downloads only applications on this current page */}
+        {paginatedApps.length > 0 && (
+          <button
+            onClick={handleDownload}
+            disabled={downloading}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              padding: '10px 20px', borderRadius: 12, border: 'none',
+              background: downloading ? 'var(--color-surface-2)' : 'var(--color-primary)',
+              color: downloading ? 'var(--color-text-muted)' : 'white',
+              fontWeight: 700, fontSize: 14, cursor: downloading ? 'not-allowed' : 'pointer',
+              boxShadow: '0 4px 14px rgba(30,73,106,0.25)',
+              transition: 'all 0.2s',
+            }}
+            title={`Download resumes and details for the ${paginatedApps.length} applicants on this page`}
+          >
+            <Download size={16} style={{ animation: downloading ? 'spin 1s linear infinite' : 'none' }} />
+            {downloading
+              ? 'Preparing…'
+              : activeCategoryName
+                ? `Download Page ${validCurrentPage} "${activeCategoryName}" (${paginatedApps.length})`
+                : `Download Page ${validCurrentPage} Resumes (${paginatedApps.length})`}
+          </button>
+        )}
       </div>
 
       {/* Status filter */}
-      <div style={{ display: 'flex', gap: 12, marginBottom: 32, flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
         <button
           onClick={() => setStatusFilter('ALL')}
           style={{
@@ -547,6 +683,62 @@ function ApplicationsPageContent() {
         })}
       </div>
 
+      {/* Category filter */}
+      {availableCategories.length > 0 && (
+        <div style={{
+          display: 'flex', gap: 10, marginBottom: 32, flexWrap: 'wrap',
+          padding: '14px 18px',
+          background: 'white',
+          borderRadius: 16,
+          border: '1px solid var(--color-border)',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+          alignItems: 'center',
+        }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, fontWeight: 700, color: 'var(--color-text-muted)', marginRight: 4, flexShrink: 0 }}>
+            <Tag size={14} /> Category:
+          </span>
+          <button
+            onClick={() => setCategoryFilter(null)}
+            style={{
+              padding: '5px 13px', borderRadius: 20, fontSize: 13, fontWeight: 600,
+              border: `1.5px solid ${categoryFilter === null ? 'var(--color-primary)' : 'var(--color-border)'}`,
+              background: categoryFilter === null ? 'var(--color-primary)' : 'white',
+              color: categoryFilter === null ? 'white' : 'var(--color-text-muted)',
+              cursor: 'pointer', transition: 'all 0.2s',
+            }}
+          >
+            All
+          </button>
+          {availableCategories.map((cat) => {
+            const isActive = categoryFilter === cat.id;
+            return (
+              <button
+                key={cat.id}
+                onClick={() => setCategoryFilter(isActive ? null : cat.id)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  padding: '5px 13px', borderRadius: 20, fontSize: 13, fontWeight: 600,
+                  border: `1.5px solid ${isActive ? '#8b5cf6' : 'var(--color-border)'}`,
+                  background: isActive ? '#ede9fe' : 'white',
+                  color: isActive ? '#6d28d9' : 'var(--color-text-muted)',
+                  cursor: 'pointer', transition: 'all 0.2s',
+                }}
+              >
+                {cat.name}
+                <span style={{
+                  fontSize: 11, fontWeight: 700,
+                  background: isActive ? '#6d28d9' : '#f3f4f6',
+                  color: isActive ? 'white' : 'var(--color-text-muted)',
+                  padding: '1px 6px', borderRadius: 10, minWidth: 18, textAlign: 'center',
+                }}>
+                  {cat.count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+
       <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 24, alignItems: 'start' }}>
         {/* Applications List */}
         <div style={{ background: 'white', borderRadius: 24, border: '1px solid var(--color-border)', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
@@ -568,7 +760,7 @@ function ApplicationsPageContent() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.map((app) => {
+                  {paginatedApps.map((app) => {
                     const cfg = STATUS_CONFIG[app.status];
                     const isSelected = selected?.id === app.id;
                     return (
@@ -782,6 +974,107 @@ function ApplicationsPageContent() {
                   })}
                 </tbody>
               </table>
+            </div>
+          )}
+
+          {/* Pagination Controls */}
+          {filtered.length > 0 && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '16px 24px',
+              borderTop: '1px solid var(--color-border)',
+              background: 'white',
+              flexWrap: 'wrap',
+              gap: 16,
+            }}>
+              <div style={{ fontSize: 13, color: 'var(--color-text-muted)' }}>
+                Showing <strong style={{ color: 'var(--color-text)' }}>{startIndex + 1}</strong> to{' '}
+                <strong style={{ color: 'var(--color-text)' }}>{endIndex}</strong> of{' '}
+                <strong style={{ color: 'var(--color-text)' }}>{filtered.length}</strong> applications
+                {totalPages > 1 && (
+                  <span> (Page {validCurrentPage} of {totalPages})</span>
+                )}
+              </div>
+
+              {totalPages > 1 && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={validCurrentPage === 1}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4,
+                      padding: '6px 12px',
+                      borderRadius: 8,
+                      fontSize: 13,
+                      fontWeight: 600,
+                      border: '1px solid var(--color-border)',
+                      background: validCurrentPage === 1 ? 'var(--color-surface-2)' : 'white',
+                      color: validCurrentPage === 1 ? 'var(--color-text-subtle)' : 'var(--color-text)',
+                      cursor: validCurrentPage === 1 ? 'not-allowed' : 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    <ChevronLeft size={16} /> Prev
+                  </button>
+
+                  {getPageNumbers(validCurrentPage, totalPages).map((p, idx) => {
+                    if (p === '...') {
+                      return (
+                        <span key={`ellipsis-${idx}`} style={{ padding: '0 4px', color: 'var(--color-text-muted)', fontSize: 13 }}>
+                          …
+                        </span>
+                      );
+                    }
+                    const isCurrent = p === validCurrentPage;
+                    return (
+                      <button
+                        key={`page-${p}`}
+                        onClick={() => setCurrentPage(p as number)}
+                        style={{
+                          minWidth: 34,
+                          height: 34,
+                          padding: '0 8px',
+                          borderRadius: 8,
+                          fontSize: 13,
+                          fontWeight: 600,
+                          border: isCurrent ? 'none' : '1px solid var(--color-border)',
+                          background: isCurrent ? 'var(--color-primary)' : 'white',
+                          color: isCurrent ? 'white' : 'var(--color-text)',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s',
+                        }}
+                      >
+                        {p}
+                      </button>
+                    );
+                  })}
+
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={validCurrentPage === totalPages}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4,
+                      padding: '6px 12px',
+                      borderRadius: 8,
+                      fontSize: 13,
+                      fontWeight: 600,
+                      border: '1px solid var(--color-border)',
+                      background: validCurrentPage === totalPages ? 'var(--color-surface-2)' : 'white',
+                      color: validCurrentPage === totalPages ? 'var(--color-text-subtle)' : 'var(--color-text)',
+                      cursor: validCurrentPage === totalPages ? 'not-allowed' : 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    Next <ChevronRight size={16} />
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>

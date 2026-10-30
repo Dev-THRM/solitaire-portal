@@ -250,6 +250,34 @@ export async function adminRemoveCategory(
   });
 }
 
+export type ApplicationWithCategories = Application & {
+  categories: {
+    categoryId: string;
+    confidence: number;
+    source: 'LLM' | 'MANUAL';
+    category: { id: string; name: string };
+  }[];
+};
+
+export async function adminGetApplicationsWithCategories(
+  token: string,
+  jobId?: string,
+): Promise<{ success: boolean; data: ApplicationWithCategories[] }> {
+  const qs = jobId ? `?jobId=${jobId}` : '';
+  return apiFetch(`/api/admin/applications/with-categories${qs}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+export async function adminGetApplicationsByCategory(
+  token: string,
+  categoryId: string,
+): Promise<{ success: boolean; data: Application[] }> {
+  return apiFetch(`/api/apply/admin?categoryId=${categoryId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
 export async function adminGetAlternateSuggestions(
   token: string,
   applicationId: string,

@@ -90,6 +90,9 @@ export function resolveUploadedFilePath(filenameOrPath: string): string {
   const primaryFilenamePath = path.join(primaryUploadDir, filename);
   if (fs.existsSync(primaryFilenamePath)) return primaryFilenamePath;
 
+  const primaryVideosPath = path.join(primaryUploadDir, 'videos', filename);
+  if (fs.existsSync(primaryVideosPath)) return primaryVideosPath;
+
   // 2. Check current public/uploads
   const currentPublic = path.join(process.cwd(), 'public', 'uploads', clean);
   if (fs.existsSync(currentPublic)) {
@@ -116,6 +119,9 @@ export function resolveUploadedFilePath(filenameOrPath: string): string {
 
     const domainFilename = path.join(domainRoot, 'uploads', filename);
     if (fs.existsSync(domainFilename)) return domainFilename;
+
+    const domainVideos = path.join(domainRoot, 'uploads', 'videos', filename);
+    if (fs.existsSync(domainVideos)) return domainVideos;
   }
 
   // 4. Scan sibling build version directories on Hostinger (hbuilds/versions/*/nodejs/public/uploads)
@@ -163,6 +169,12 @@ export function resolveUploadedFilePath(filenameOrPath: string): string {
   } catch (err) {
     console.warn('[uploadPath] Error scanning version directories:', err);
   }
+
+  // 5. Fallback: check public/images (for existing video and image assets)
+  const publicImages = path.join(process.cwd(), 'public', 'images', clean);
+  if (fs.existsSync(publicImages)) return publicImages;
+  const publicImagesFilename = path.join(process.cwd(), 'public', 'images', filename);
+  if (fs.existsSync(publicImagesFilename)) return publicImagesFilename;
 
   // Default fallback
   return primaryPath;

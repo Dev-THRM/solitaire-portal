@@ -46,15 +46,15 @@ const TESTIMONIALS = [
 ];
 
 const VIDEOS = [
-  { src: '/images/15137293_2160_3840_30fps.mp4', label: 'Atlantis, The Palm', credit: 'Solitaire' },
-  { src: '/images/4253148-uhd_4096_2160_25fps.mp4', label: 'Personal Chef', credit: 'Solitaire' },
-  { src: '/images/11110914-hd_1920_1080_30fps.mp4', label: 'Burj Khalifa', credit: 'Solitaire' },
-  { src: '/images/6949138-hd_1920_1080_25fps.mp4', label: 'Nanny', credit: 'Solitaire' },
-  { src: '/images/19376557-hd_1920_1080_25fps.mp4', label: 'Sahara Desert', credit: 'Solitaire' },
-  { src: '/images/7608903-uhd_3840_2160_25fps.mp4', label: 'Butler', credit: 'Solitaire' },
-  { src: '/images/3864917-uhd_2560_1440_30fps.mp4', label: 'Dubai Frame', credit: 'Solitaire' },
-  { src: '/images/8344927-uhd_3840_2160_25fps.mp4', label: 'Chauffeur', credit: 'Solitaire' },
-  { src: '/images/7848927-uhd_3840_2160_25fps.mp4', label: 'Jumeirah Burj Al Arab', credit: 'Solitaire' },
+  { src: '/uploads/15137293_2160_3840_30fps.mp4', label: 'Atlantis, The Palm', credit: 'Solitaire' },
+  { src: '/uploads/4253148-uhd_4096_2160_25fps.mp4', label: 'Personal Chef', credit: 'Solitaire' },
+  { src: '/uploads/11110914-hd_1920_1080_30fps.mp4', label: 'Burj Khalifa', credit: 'Solitaire' },
+  { src: '/uploads/6949138-hd_1920_1080_25fps.mp4', label: 'Nanny', credit: 'Solitaire' },
+  { src: '/uploads/19376557-hd_1920_1080_25fps.mp4', label: 'Sahara Desert', credit: 'Solitaire' },
+  { src: '/uploads/7608903-uhd_3840_2160_25fps.mp4', label: 'Butler', credit: 'Solitaire' },
+  { src: '/uploads/3864917-uhd_2560_1440_30fps.mp4', label: 'Dubai Frame', credit: 'Solitaire' },
+  { src: '/uploads/8344927-uhd_3840_2160_25fps.mp4', label: 'Chauffeur', credit: 'Solitaire' },
+  { src: '/uploads/7848927-uhd_3840_2160_25fps.mp4', label: 'Jumeirah Burj Al Arab', credit: 'Solitaire' },
 ];  
 
 const SERVICES = [
