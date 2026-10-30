@@ -25,7 +25,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
       'From supervising domestic staff and coordinating specialist contractors to overseeing procurement, inventory, and household accounting, our house managers allow principals and their families to focus on what matters most.',
       'Every house manager presented by Solitaire possesses exceptional communication skills, emotional intelligence, and rigorous background verification tailored to private estates across Dubai and the UAE.'
     ],
-    image: '/images/luxury_penthouse_dubai.jpg',
+    image: '/images/house-manager.jpg',
     keyHighlights: [
       'Single point of contact for all residence operations',
       'Vendor & specialist contractor supervision',
@@ -78,7 +78,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
       'Our candidates bring extensive experience supporting C-suite executives, family offices, and prominent figures, delivering seamless time management, flawless itinerary planning, and impeccable document preparation.',
       'Whether based in your private office, corporate headquarters, or traveling internationally, they operate with total discretion, composure, and anticipatory problem-solving.'
     ],
-    image: '/images/luxury_staff_team.jpg',
+    image: '/images/personal-assistant.jpg',
     keyHighlights: [
       'Bespoke calendar, meeting, and prioritization management',
       'Complex private aviation & global travel logistics',
@@ -127,7 +127,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
       'A Solitaire Facility Manager ensures that HVAC cooling plants, smart automation, water purification, swimming pools, electrical grids, and security infrastructure function without disruption.',
       'By managing vendor SLA contracts and conducting rigorous scheduled inspections, they protect your real estate investments 24/7.'
     ],
-    image: '/images/luxury_villa_pool.jpg',
+    image: '/images/facility-manager.jpg',
     keyHighlights: [
       'HVAC, chiller, and mechanical preventative maintenance',
       'Smart home automation, CCTV, and biometric security systems',
@@ -171,7 +171,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
       'From serving morning tea and coordinating daily wardrobe care to executing formal multi-course dinners with impeccable silver service, our butlers elevate the domestic experience.',
       'Trained in diplomatic protocol and total confidentiality, they represent the pinnacle of bespoke hospitality.'
     ],
-    image: '/images/luxury_staff_team.jpg',
+    image: '/images/butler.jpg',
     keyHighlights: [
       'Formal silver, English, and French table service',
       'Fine wine cellar management and spirits pairing',
@@ -259,7 +259,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
       'Our chauffeurs are skilled in maneuvering luxury and exotic vehicle fleets (Rolls-Royce, Bentley, Mercedes-Maybach, Range Rover), maintaining vehicles in showroom condition at all times.',
       'Trained in defensive driving, route optimization, and VIP etiquette, they ensure every journey is effortless, comfortable, and protected.'
     ],
-    image: '/images/luxury_staff_team.jpg',
+    image: '/images/driver.jpg',
     keyHighlights: [
       'Impeccable knowledge of Dubai, Abu Dhabi, and UAE roadways',
       'Luxury & exotic fleet care, detailing, and scheduled servicing',
@@ -304,7 +304,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
       'From caring for newborns with gentle sleep-training techniques to helping school-age children with bilingual language skills, etiquette, and homework, our candidates bring warmth, education, and structure.',
       'All candidates undergo thorough pediatric first aid certification, extensive identity and criminal record screening, and rigorous reference evaluations.'
     ],
-    image: '/images/luxury_penthouse_dubai.jpg',
+    image: '/images/nanny.jpg',
     keyHighlights: [
       'Pediatric First Aid & CPR certified professionals',
       'Early childhood education, creative play, and motor skills development',
@@ -353,7 +353,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
       'Whether preparing an authentic Lebanese mezze, traditional Japanese sushi, authentic Italian pasta, or royal Indian curries, they ensure every dish delivers authentic flavor and exquisite plating.',
       'Our chefs have trained in world-class 5-star hotel kitchens and are seasoned in catering large family gatherings, diplomatic lunches, and gala dinners.'
     ],
-    image: '/images/luxury_chef_cooking.jpg',
+    image: '/images/multicuisine-chef.jpg',
     keyHighlights: [
       'Mastery across Middle Eastern, European, Asian, and Mediterranean cuisines',
       'Lavish family gatherings, royal banquets, and formal reception catering',
