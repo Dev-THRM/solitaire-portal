@@ -19,7 +19,6 @@ import {
   ArrowRight,
   HelpCircle,
   Clock,
-  UserCheck,
 } from 'lucide-react';
 
 interface Props {
@@ -289,77 +288,6 @@ export default async function ServiceDetailPage({ params }: Props) {
                       <span style={{ fontSize: '13px', lineHeight: 1.5, color: 'var(--color-text)', fontWeight: 500 }}>
                         {resp}
                       </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Candidate Screening & Qualifications */}
-              <div style={{ background: 'white', borderRadius: '24px', padding: '36px', border: '1px solid var(--color-border)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                  <UserCheck size={20} color="#047857" />
-                  <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--color-text)', letterSpacing: '-0.02em' }}>
-                    Screening & Qualification Standards
-                  </h2>
-                </div>
-                <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', marginBottom: '24px' }}>
-                  We only recommend candidates who meet our uncompromising selection criteria:
-                </p>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {service.qualifications.map((qual, idx) => (
-                    <div
-                      key={idx}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                        padding: '12px 16px',
-                        background: '#f0fdf4',
-                        borderRadius: '12px',
-                        border: '1px solid #bbf7d0',
-                        fontSize: '13.5px',
-                        color: '#166534',
-                        fontWeight: 500,
-                      }}
-                    >
-                      <ShieldCheck size={18} color="#16a34a" style={{ flexShrink: 0 }} />
-                      <span>{qual}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Ideal For */}
-              <div style={{ background: 'white', borderRadius: '24px', padding: '36px', border: '1px solid var(--color-border)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                  <Sparkles size={20} color="#f59e0b" />
-                  <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--color-text)', letterSpacing: '-0.02em' }}>
-                    Ideal Households & Environments
-                  </h2>
-                </div>
-                <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', marginBottom: '20px' }}>
-                  Our {service.title} candidates excel in settings such as:
-                </p>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  {service.idealFor.map((item, idx) => (
-                    <div
-                      key={idx}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                        padding: '12px 16px',
-                        background: 'var(--color-surface-2)',
-                        borderRadius: '12px',
-                        border: '1px solid var(--color-border)',
-                        fontSize: '14px',
-                        color: 'var(--color-text)',
-                      }}
-                    >
-                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--color-primary)', flexShrink: 0 }} />
-                      <span>{item}</span>
                     </div>
                   ))}
                 </div>

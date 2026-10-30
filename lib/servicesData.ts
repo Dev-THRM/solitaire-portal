@@ -8,8 +8,8 @@ export interface ServiceDetail {
   image: string;
   keyHighlights: string[];
   responsibilities: string[];
-  qualifications: string[];
-  idealFor: string[];
+  qualifications?: string[];
+  idealFor?: string[];
   faqs: { question: string; answer: string }[];
 }
 
