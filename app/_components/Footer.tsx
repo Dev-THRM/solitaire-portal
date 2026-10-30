@@ -88,9 +88,33 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Quick Links */}
         <div style={{
-          borderTop: '1px solid var(--color-border)',
-          paddingTop: '20px',
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '16px 28px',
+          alignItems: 'center',
+          paddingBottom: '24px',
+          fontSize: '13px',
+          fontWeight: 500,
+          color: 'var(--color-text-muted)',
+          borderBottom: '1px solid var(--color-border)',
+          marginBottom: '20px',
+        }}>
+          <Link href="/" style={{ color: 'inherit', textDecoration: 'none' }}>Home</Link>
+          <Link href="/about" style={{ color: 'inherit', textDecoration: 'none' }}>About Us</Link>
+          <Link href="/services" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Our Services</Link>
+          <Link href="/jobs" style={{ color: 'inherit', textDecoration: 'none' }}>Jobs</Link>
+          <Link href="/blogs" style={{ color: 'inherit', textDecoration: 'none' }}>Blogs</Link>
+          <span style={{ color: 'var(--color-border)' }}>|</span>
+          <Link href="/services/house-manager" style={{ color: 'inherit', textDecoration: 'none' }}>House Manager</Link>
+          <Link href="/services/butler" style={{ color: 'inherit', textDecoration: 'none' }}>Butler</Link>
+          <Link href="/services/personal-chef" style={{ color: 'inherit', textDecoration: 'none' }}>Personal Chef</Link>
+          <Link href="/services/nanny" style={{ color: 'inherit', textDecoration: 'none' }}>Nanny</Link>
+          <Link href="/services/chauffeur-driver" style={{ color: 'inherit', textDecoration: 'none' }}>Chauffeur</Link>
+        </div>
+
+        <div style={{
           fontSize: '12px',
           color: 'var(--color-text-subtle)',
           display: 'flex',

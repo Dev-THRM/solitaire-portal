@@ -58,14 +58,14 @@ const VIDEOS = [
 ];  
 
 const SERVICES = [
-  { icon: <Home size={32} strokeWidth={1.5} color="var(--color-primary)" />, title: 'House Manager', desc: 'Seamless household management for a stress-free lifestyle.' },
-  { icon: <Briefcase size={32} strokeWidth={1.5} color="var(--color-primary)" />, title: 'Executive Assistant', desc: 'Professional support for your personal and business needs.' },
-  { icon: <Building2 size={32} strokeWidth={1.5} color="var(--color-primary)" />, title: 'Facility Manager', desc: 'Efficient property and facility management solutions.' },
-  { icon: <ConciergeBell size={32} strokeWidth={1.5} color="var(--color-primary)" />, title: 'Butler', desc: 'Discreet and professional service at your command.' },
-  { icon: <ChefHat size={32} strokeWidth={1.5} color="var(--color-primary)" />, title: 'Personal Chef', desc: 'Nutritious, customised meals for your lifestyle.' },
-  { icon: <Car size={32} strokeWidth={1.5} color="var(--color-primary)" />, title: 'Chauffeur/Driver', desc: 'Safe, reliable and professional drivers.' },
-  { icon: <Baby size={32} strokeWidth={1.5} color="var(--color-primary)" />, title: 'Nanny', desc: "Caring professionals for your child's bright future." },
-  { icon: <UtensilsCrossed size={32} strokeWidth={1.5} color="var(--color-primary)" />, title: 'Multicuisine Chef', desc: 'A world of flavours tailored to your taste.' },
+  { icon: <Home size={32} strokeWidth={1.5} color="var(--color-primary)" />, title: 'House Manager', desc: 'Seamless household management for a stress-free lifestyle.', slug: 'house-manager' },
+  { icon: <Briefcase size={32} strokeWidth={1.5} color="var(--color-primary)" />, title: 'Executive Assistant', desc: 'Professional support for your personal and business needs.', slug: 'executive-assistant' },
+  { icon: <Building2 size={32} strokeWidth={1.5} color="var(--color-primary)" />, title: 'Facility Manager', desc: 'Efficient property and facility management solutions.', slug: 'facility-manager' },
+  { icon: <ConciergeBell size={32} strokeWidth={1.5} color="var(--color-primary)" />, title: 'Butler', desc: 'Discreet and professional service at your command.', slug: 'butler' },
+  { icon: <ChefHat size={32} strokeWidth={1.5} color="var(--color-primary)" />, title: 'Personal Chef', desc: 'Nutritious, customised meals for your lifestyle.', slug: 'personal-chef' },
+  { icon: <Car size={32} strokeWidth={1.5} color="var(--color-primary)" />, title: 'Chauffeur/Driver', desc: 'Safe, reliable and professional drivers.', slug: 'chauffeur-driver' },
+  { icon: <Baby size={32} strokeWidth={1.5} color="var(--color-primary)" />, title: 'Nanny', desc: "Caring professionals for your child's bright future.", slug: 'nanny' },
+  { icon: <UtensilsCrossed size={32} strokeWidth={1.5} color="var(--color-primary)" />, title: 'Multicuisine Chef', desc: 'A world of flavours tailored to your taste.', slug: 'multicuisine-chef' },
 ];
 
 const FEATURES = [
@@ -254,7 +254,7 @@ function VideoHero() {
 
           {/* CTAs */}
           <motion.div variants={fadeUp} style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
-            <Link href="#services" className="btn" style={{
+            <Link href="/services" className="btn" style={{
               background: 'white', color: 'var(--color-primary-dark)',
               padding: '16px 36px', fontSize: '15px', fontWeight: 600
             }}>
@@ -356,8 +356,8 @@ function VideoHero() {
 }
 // Helper Components for animations
 
-function ServiceCard({ icon, title, desc, delay = 0 }: { icon: React.ReactNode, title: string, desc: string, delay?: number }) {
-  return (
+function ServiceCard({ icon, title, desc, slug, delay = 0 }: { icon: React.ReactNode, title: string, desc: string, slug?: string, delay?: number }) {
+  const cardContent = (
     <motion.div
       initial={{ opacity: 0, scale: 0.9, y: 30 }}
       whileInView={{ opacity: 1, scale: 1, y: 0 }}
@@ -399,15 +399,28 @@ function ServiceCard({ icon, title, desc, delay = 0 }: { icon: React.ReactNode, 
           display: 'flex', flexDirection: 'column', justifyContent: 'center',
           transform: 'rotateY(180deg)'
         }}>
-          <div style={{ width: '48px', height: '48px', background: 'rgba(255,255,255,0.1)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
+          <div style={{ width: '48px', height: '48px', background: 'rgba(255,255,255,0.1)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
             {React.cloneElement(icon as any, { size: 24, color: 'white' })}
           </div>
-          <h3 style={{ fontSize: '22px', color: 'white', letterSpacing: '-0.02em', marginBottom: '16px' }}>{title}</h3>
-          <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.8)', lineHeight: 1.6, margin: 0 }}>{desc}</p>
+          <h3 style={{ fontSize: '20px', color: 'white', letterSpacing: '-0.02em', marginBottom: '8px' }}>{title}</h3>
+          <p style={{ fontSize: '13.5px', color: 'rgba(255,255,255,0.85)', lineHeight: 1.5, margin: 0 }}>{desc}</p>
+          <div style={{ marginTop: '14px', fontSize: '12px', fontWeight: 700, color: '#f59e0b', display: 'inline-flex', alignItems: 'center', gap: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            View Full Service <ChevronRight size={14} />
+          </div>
         </div>
       </motion.div>
     </motion.div>
   );
+
+  if (slug) {
+    return (
+      <Link href={`/services/${slug}`} style={{ textDecoration: 'none', display: 'block' }}>
+        {cardContent}
+      </Link>
+    );
+  }
+
+  return cardContent;
 }
 
 function GridUnfoldStack() {
@@ -976,8 +989,27 @@ export default function HomeClient() {
           </motion.div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '32px' }}>
             {SERVICES.map((srv, idx) => (
-              <ServiceCard key={idx} icon={srv.icon} title={srv.title} desc={srv.desc} delay={idx * 0.1} />
+              <ServiceCard key={idx} icon={srv.icon} title={srv.title} desc={srv.desc} slug={srv.slug} delay={idx * 0.1} />
             ))}
+          </div>
+
+          <div style={{ textAlign: 'center', marginTop: '54px' }}>
+            <Link
+              href="/services"
+              className="btn btn-primary"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '16px 36px',
+                borderRadius: '9999px',
+                fontSize: '15px',
+                fontWeight: 600,
+                boxShadow: '0 8px 24px rgba(30,73,106,0.15)',
+              }}
+            >
+              Explore All Services & Roles <ChevronRight size={18} />
+            </Link>
           </div>
         </div>
       </section>

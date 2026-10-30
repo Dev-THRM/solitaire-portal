@@ -26,9 +26,9 @@ export default function Navbar() {
   const navLinks = [
     { href: '/', label: 'Home', icon: Home },
     { href: '/about', label: 'About Us', icon: Info },
+    { href: '/services', label: 'Services', icon: Layers },
     { href: '/jobs', label: 'Jobs', icon: Briefcase },
     { href: '/blogs', label: 'Blogs', icon: BookOpen },
-    { href: '/#services', label: 'Our Services', icon: Layers },
     { href: '/#why-us', label: 'Why Us', icon: Award },
     { href: '/#contact', label: 'Contact Us', icon: Mail },
   ];
