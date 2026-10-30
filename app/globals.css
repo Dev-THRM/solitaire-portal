@@ -2,6 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @import "tailwindcss";
+@source "../app";
 
 /* ── Design Tokens ───────────────────────────────────────────────────────── */
 :root {
@@ -432,6 +433,79 @@ a:hover { color: var(--color-primary-dark); }
     justify-content: center;
     align-items: center;
     width: 100%;
+  }
+}
+
+/* ── Service Standards Section ────────────────────────────────────────────── */
+.standards-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  align-items: stretch;
+}
+
+@media (min-width: 1024px) {
+  .standards-layout-grid {
+    grid-template-columns: 340px 1fr;
+    gap: 32px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .standards-layout-grid {
+    grid-template-columns: 380px 1fr;
+    gap: 40px;
+  }
+}
+
+.standards-checklist-card {
+  background: white;
+  border-radius: 24px;
+  padding: 32px 28px;
+  box-shadow: 0 4px 40px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .standards-checklist-card {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+  }
+}
+
+.standards-col {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .standards-col-1 {
+    padding-right: 28px;
+    border-right: 1px solid rgba(0, 0, 0, 0.07);
+  }
+  .standards-col-2 {
+    padding-left: 28px;
+    padding-right: 28px;
+    border-right: 1px solid rgba(0, 0, 0, 0.07);
+  }
+  .standards-col-3 {
+    padding-left: 28px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .standards-col-1 {
+    padding-right: 32px;
+  }
+  .standards-col-2 {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+  .standards-col-3 {
+    padding-left: 32px;
   }
 }
 

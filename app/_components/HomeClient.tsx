@@ -701,12 +701,20 @@ function ChecklistItem({ label, delay }: { label: string; delay: number }) {
     <motion.div
       initial={{ opacity: 0, x: -12 }} whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true }} transition={{ duration: 0.5, delay, ease: [0.16, 1, 0.3, 1] }}
-      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 0', borderBottom: '1px solid rgba(0,0,0,0.055)' }}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: '12px',
+        padding: '13px 0',
+        borderBottom: '1px solid rgba(0,0,0,0.055)'
+      }}
     >
-      <span style={{ fontSize: '14px', color: '#2a2a2a', fontWeight: 450 }}>{label}</span>
+      <span style={{ fontSize: '13.5px', color: '#2a2a2a', fontWeight: 450, lineHeight: 1.4, flex: 1 }}>{label}</span>
       <motion.div
         initial={{ scale: 0, rotate: -45 }} whileInView={{ scale: 1, rotate: 0 }}
         viewport={{ once: true }} transition={{ delay: delay + 0.2, type: 'spring', stiffness: 400, damping: 20 }}
+        style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '18px', height: '18px' }}
       >
         <Check size={14} strokeWidth={2.5} color="var(--color-primary)" />
       </motion.div>
@@ -718,7 +726,7 @@ function ChecklistItem({ label, delay }: { label: string; delay: number }) {
 function ServiceStandards() {
   return (
     <section style={{ background: '#f8f7f5', padding: '120px 0' }}>
-      <div className="container">
+      <div className="container" style={{ maxWidth: '1280px' }}>
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '64px', flexWrap: 'wrap', gap: '24px' }}>
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
             <div style={{ display: 'inline-block', padding: '4px 16px', background: 'rgba(30,73,106,0.09)', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', color: 'var(--color-primary)', marginBottom: '20px', textTransform: 'uppercase' }}>
@@ -735,7 +743,7 @@ function ServiceStandards() {
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-8 items-stretch">
+        <div className="standards-layout-grid">
           {/* Left: Staff image with floating stats card */}
           <motion.div
             initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }}
@@ -770,16 +778,15 @@ function ServiceStandards() {
           <motion.div
             initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            style={{ background: 'white', borderRadius: '24px', padding: '32px 28px', boxShadow: '0 4px 40px rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.04)' }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-0"
+            className="standards-checklist-card"
           >
-            <div className="md:pr-6 md:border-r border-black/10">
+            <div className="standards-col standards-col-1">
               {STANDARDS_COL1.map((item, i) => <ChecklistItem key={item} label={item} delay={i * 0.055} />)}
             </div>
-            <div className="md:px-6 md:border-r border-black/10">
+            <div className="standards-col standards-col-2">
               {STANDARDS_COL2.map((item, i) => <ChecklistItem key={item} label={item} delay={0.1 + i * 0.055} />)}
             </div>
-            <div className="md:pl-6">
+            <div className="standards-col standards-col-3">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }} transition={{ delay: 0.3, duration: 0.8 }}
